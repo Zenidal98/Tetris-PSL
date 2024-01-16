@@ -5,9 +5,9 @@
 
 class Block{
     private:
-        int xLoc[2];
+        int xLoc;
         int yLoc;
-        char symbol[2] = {'[', ']'};
+        char symbol = 'O';
     public:
         Block(int x, int y);
         int getxLoc();
@@ -16,8 +16,8 @@ class Block{
         void setyLoc(int y);
         void display(WINDOW *win);
         void deleteold(WINDOW *win);
-        void mvright();
-        void mvleft();
+        void mvright(WINDOW *win);
+        void mvleft(WINDOW *win);
 };
 
 #endif

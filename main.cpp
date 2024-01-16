@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include "Logics.hpp"
 #include "Block.hpp"
+#include "Square.hpp"
 
 using namespace std;
 #define WIDTH 10
@@ -17,9 +18,14 @@ int main(){
     int yLoc = yStart;
 
     WINDOW *win = newwin(HEIGHT, WIDTH, yStart, xStart);
-    Block *block = new Block(xLoc, yLoc);
+    //Block *block = new Block(xLoc, yLoc);
 
-    Logics::blockFalling(*block, win);
+    Square *square = new Square(xLoc, yLoc);
+    //square->display(win);
+
+    //Logics::blockFalling(*block, win);
+    Logics::squareFalling(*square, win);
+
 
     getch();
     endwin();

@@ -4,13 +4,12 @@
 #define HEIGHT 20
 
 Block::Block(int x, int y){
-    xLoc[0] = x;
-    xLoc[1] = x+1;
+    xLoc = x;
     yLoc = y;
 }
 
 int Block::getxLoc(){
-    return xLoc[0];
+    return xLoc;
 }
 
 int Block::getyLoc(){
@@ -18,9 +17,8 @@ int Block::getyLoc(){
 }
 
 void Block::setxLoc(int x){
-    if(xLoc[1]+1 < WIDTH){
-        xLoc[0] = x;
-        xLoc[1] = x+1;
+    if(xLoc < WIDTH){
+        xLoc = 1;
     }
 }
 
@@ -29,31 +27,31 @@ void Block::setyLoc(int y){
 }
 
 void Block::display(WINDOW *win){
-    mvwaddch(win, yLoc, xLoc[0], symbol[0]);
-    mvwaddch(win, yLoc, xLoc[1], symbol[1]);
+    mvwaddch(win, yLoc, xLoc, symbol);
     wrefresh(win);
 }
 
 void Block::deleteold(WINDOW *win){
-    mvwaddch(win, yLoc, xLoc[0], ' ');
-    mvwaddch(win, yLoc, xLoc[1], ' ');
+    mvwaddch(win, yLoc, xLoc, ' ');
     wrefresh(win);
 }
 
-void Block::mvright(){
-    xLoc[0]++;
-    xLoc[1]++;
-    if(xLoc[1] >= WIDTH-1){
-        xLoc[1] = WIDTH-2;
-        xLoc[0] = WIDTH-3;
-    }
+void Block::mvright(WINDOW *win){
+    if(mvwinch(win, yLoc, xLoc+1) == ' '){
+        xLoc++;
+    }/*
+    xLoc++;
+    if(xLoc >= WIDTH-2){
+        xLoc = WIDTH-2;
+    }*/
 }
 
-void Block::mvleft(){
-    xLoc[0]--;
-    xLoc[1]--;
-    if(xLoc[0] < 1){
-        xLoc[0] = 1;
-        xLoc[1] = 2;
+void Block::mvleft(WINDOW *win){
+    if(mvwinch(win, yLoc, xLoc-1) == ' '){
+        xLoc--;
     }
+    /*xLoc--;
+    if(xLoc < 1){
+        xLoc = 1;
+    }*/
 }
