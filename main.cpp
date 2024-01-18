@@ -24,7 +24,8 @@ int main(){
     //square->display(win);
 
     //Logics::blockFalling(*block, win);
-    Logics::squareFalling(*square, win);
+    while(true)
+        Logics::squareFalling(*square, win);
 
 
     getch();

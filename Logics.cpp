@@ -32,10 +32,10 @@ void Logics::squareFalling(Square &square, WINDOW *win){
         box(win, ACS_VLINE, ACS_HLINE);
         int ch = getInput();
         if(ch == 1){
-            square.mvleft(win);
+            square.mvsquareleft(win);
         }
         else if(ch == 2){
-            square.mvright(win);
+            square.mvsquareright(win);
         }
 
         // ancora chatgpt code, dovrebbe spostare ognuno dei quattro blocchi verso il basso
