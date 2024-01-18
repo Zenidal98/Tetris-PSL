@@ -47,3 +47,23 @@ Block Square::getBotLeft() const{
 Block Square::getBotRight() const{
     return botRight;
 }
+
+void Square::setTopLeft(int x, int y){
+    topLeft.setxLoc(x);
+    topLeft.setyLoc(y);
+}
+
+void Square::setTopRight(int x, int y){
+    topRight.setxLoc(x);
+    topRight.setyLoc(y);
+}
+
+void Square::setBotLeft(int x, int y){
+    botLeft.setxLoc(x);
+    botLeft.setyLoc(y);
+}
+
+void Square::setBotRight(int x, int y){
+    botRight.setxLoc(x);
+    botRight.setyLoc(y);
+}

@@ -39,11 +39,10 @@ void Logics::squareFalling(Square &square, WINDOW *win){
         }
 
         // ancora chatgpt code, dovrebbe spostare ognuno dei quattro blocchi verso il basso
-        square.setyLoc(square.getyLoc()+1);
-        square.getTopLeft().setyLoc(square.getyLoc());
-        square.getTopRight().setyLoc(square.getyLoc());
-        square.getBotLeft().setyLoc(square.getyLoc() + 1);
-        square.getBotRight().setyLoc(square.getyLoc() + 1);
+        square.setTopLeft(square.getTopLeft().getxLoc(), square.getTopLeft().getyLoc()+1);
+        square.setTopRight(square.getTopRight().getxLoc(), square.getTopRight().getyLoc()+1);
+        square.setBotLeft(square.getBotLeft().getxLoc(), square.getBotLeft().getyLoc()+1);
+        square.setBotRight(square.getBotRight().getxLoc(), square.getBotRight().getyLoc()+1);
 
         // mostra quadrato
         square.display(win);

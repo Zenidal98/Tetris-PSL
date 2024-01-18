@@ -23,6 +23,12 @@ class Square: public Block{
         void deleteold(WINDOW *win);
         void mvsquareright(WINDOW *win);
         void mvsquareleft(WINDOW *win);
+
+        //chatgpt
+        void setTopLeft(int x, int y);
+        void setTopRight(int x, int y);
+        void setBotLeft(int x, int y);
+        void setBotRight(int x, int y);
 };
 
 #endif
