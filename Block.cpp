@@ -1,7 +1,7 @@
 #include "Block.hpp"
 
-#define WIDTH 10
-#define HEIGHT 20
+//#define WIDTH 10
+//#define HEIGHT 20
 
 Block::Block(int x, int y){
     xLoc = x;
@@ -38,8 +38,10 @@ void Block::deleteold(WINDOW *win){
 
 void Block::mvright(WINDOW *win){
     // se a destra non c'è niente, sposta
-    if(mvwinch(win, yLoc, xLoc+1) == ' '){
-        xLoc++;
+    if (xLoc + 1 < WIDTH - 1) {
+        if(mvwinch(win, yLoc, xLoc+1) == ' '){
+            xLoc++;
+        }
     }/*
     xLoc++;
     if(xLoc >= WIDTH-2){
@@ -49,8 +51,10 @@ void Block::mvright(WINDOW *win){
 
 void Block::mvleft(WINDOW *win){
     // se a sinistra non c'è niente, sposta
-    if(mvwinch(win, yLoc, xLoc-1) == ' '){
-        xLoc--;
+    if (xLoc - 1 > 0) {
+        if(mvwinch(win, yLoc, xLoc-1) == ' '){
+            xLoc--;
+        }
     }
     /*xLoc--;
     if(xLoc < 1){

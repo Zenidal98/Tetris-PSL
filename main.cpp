@@ -20,13 +20,14 @@ int main(){
     WINDOW *win = newwin(HEIGHT, WIDTH, yStart, xStart);
     //Block *block = new Block(xLoc, yLoc);
 
-    Square *square = new Square(xLoc, yLoc);
     //square->display(win);
 
     //Logics::blockFalling(*block, win);
-    while(true)
+    while(true){
+        Square *square = new Square(xLoc, yLoc);
         Logics::squareFalling(*square, win);
-
+        wrefresh(win);
+    }
 
     getch();
     endwin();

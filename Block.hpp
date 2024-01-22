@@ -1,6 +1,9 @@
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 
+#define WIDTH 10
+#define HEIGHT 20
+
 #include <ncurses.h>
 
 class Block{

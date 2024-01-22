@@ -19,17 +19,25 @@ void Square::deleteold(WINDOW *win){
 }
 
 void Square::mvsquareright(WINDOW *win){
-    topLeft.mvright(win);
-    topRight.mvright(win);
-    botLeft.mvright(win);
-    botRight.mvright(win);
+    if(topRight.getxLoc() < WIDTH-2){
+        if(mvwinch(win, topRight.getyLoc(), topRight.getxLoc()+1) == ' ' && mvwinch(win, botRight.getyLoc(), botRight.getxLoc()+1) == ' '){
+            topLeft.mvright(win);
+            topRight.mvright(win);
+            botLeft.mvright(win);
+            botRight.mvright(win);
+        }
+    }
 }
 
 void Square::mvsquareleft(WINDOW *win){
-    topLeft.mvleft(win);
-    topRight.mvleft(win);
-    botLeft.mvleft(win);
-    botRight.mvleft(win);
+    if(topLeft.getxLoc() > 0){
+        if(mvwinch(win, topLeft.getyLoc(), topLeft.getxLoc()-1) == ' ' && mvwinch(win, botLeft.getyLoc(), botLeft.getxLoc()-1) == ' '){
+            topLeft.mvleft(win);
+            topRight.mvleft(win);
+            botLeft.mvleft(win);
+            botRight.mvleft(win);
+        }
+    }
 }
 
 Block Square::getTopLeft() const{
