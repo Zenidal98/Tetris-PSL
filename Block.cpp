@@ -3,9 +3,10 @@
 //#define WIDTH 10
 //#define HEIGHT 20
 
-Block::Block(int x, int y){
+Block::Block(int x, int y, int color){
     xLoc = x;
     yLoc = y;
+    colorPair = color;
 }
 
 int Block::getxLoc(){
@@ -27,7 +28,9 @@ void Block::setyLoc(int y){
 }
 
 void Block::display(WINDOW *win){
+    wattron(win, COLOR_PAIR(colorPair)); // Turn on color pair
     mvwaddch(win, yLoc, xLoc, symbol);
+    wattroff(win, COLOR_PAIR(colorPair)); // Turn off color pair
     wrefresh(win);
 }
 
@@ -61,3 +64,4 @@ void Block::mvleft(WINDOW *win){
         xLoc = 1;
     }*/
 }
+

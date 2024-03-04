@@ -13,7 +13,7 @@ class Logics{
         // caduta blocco verso il basso
         static void blockFalling(Block &block, WINDOW *win);
         // caduta quadrato (4 blocchi)
-        static void squareFalling(Square &square, WINDOW *win);
+        // static void squareFalling(Square &square, WINDOW *win);
 };
 
 #endif

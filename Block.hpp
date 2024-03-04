@@ -11,8 +11,10 @@ class Block{
         int xLoc;
         int yLoc;
         char symbol = 'O';
+        // serve per dare colore
+        int colorPair;
     public:
-        Block(int x, int y);
+        Block(int x, int y, int color);
         int getxLoc();
         int getyLoc();
 
@@ -28,6 +30,7 @@ class Block{
 
         void mvright(WINDOW *win);
         void mvleft(WINDOW *win);
+
 };
 
 #endif
