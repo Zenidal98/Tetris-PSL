@@ -24,7 +24,7 @@ void Logics::blockFalling(Block &block, WINDOW *win){
     }
 }
 
-/*
+
 void Logics::squareFalling(Square &square, WINDOW *win){
     timeout(0);
     // chatgpt code, controlla se sotto c'è spazio in teoria
@@ -50,7 +50,7 @@ void Logics::squareFalling(Square &square, WINDOW *win){
         napms(350);
     }
 }
-*/
+
 
 // a per andare a sinistra, d per andare a destra
 int Logics::getInput(){

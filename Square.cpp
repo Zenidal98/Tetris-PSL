@@ -1,7 +1,7 @@
 #include "Square.hpp"
 
 // chatgpt code, crea quadrato 2x2 blocchi
-Square::Square(int x, int y): Block(x, y), topLeft(x,y), topRight(x+1,y), botLeft(x,y+1), botRight(x+1,y+1){
+Square::Square(int x, int y, int color): Block(x, y, color), topLeft(x,y, color), topRight(x+1,y, color), botLeft(x,y+1, color), botRight(x+1,y+1, color){
 }
 
 void Square::display(WINDOW *win){

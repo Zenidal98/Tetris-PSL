@@ -10,9 +10,10 @@ class Square: public Block{
         Block topRight;
         Block botLeft;
         Block botRight;
+        int colorPair;
     
     public:
-        Square(int x, int y);
+        Square(int x, int y, int color);
         
         Block getTopLeft() const;
         Block getTopRight() const;

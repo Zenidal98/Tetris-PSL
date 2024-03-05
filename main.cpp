@@ -40,10 +40,10 @@ int main(){
     //square->display(win);
 
     while(true){
-        Block *block = new Block(xLoc, yLoc, rand()%6+1);
-        //Square *square = new Square(xLoc, yLoc);
-        Logics::blockFalling(*block, win);
-        //Logics::squareFalling(*square, win);
+        //Block *block = new Block(xLoc, yLoc, rand()%6+1);
+        Square *square = new Square(xLoc, yLoc, rand()%6+1);
+        //Logics::blockFalling(*block, win);
+        Logics::squareFalling(*square, win);
         wrefresh(win);
     }
 
