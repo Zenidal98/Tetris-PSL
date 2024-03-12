@@ -75,3 +75,14 @@ void Square::setBotRight(int x, int y){
     botRight.setxLoc(x);
     botRight.setyLoc(y);
 }
+
+void Square::mvsquaredown(WINDOW *win){
+    if(botLeft.getyLoc() < HEIGHT-1){
+        if(mvwinch(win, botLeft.getyLoc()+1, botLeft.getxLoc()) == ' ' && mvwinch(win, botRight.getyLoc()+1, botRight.getxLoc()) == ' '){
+            topLeft.mvdown(win);
+            topRight.mvdown(win);
+            botLeft.mvdown(win);
+            botRight.mvdown(win);
+        }
+    }
+}

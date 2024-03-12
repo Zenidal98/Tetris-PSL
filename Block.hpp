@@ -30,6 +30,7 @@ class Block{
 
         void mvright(WINDOW *win);
         void mvleft(WINDOW *win);
+        void mvdown(WINDOW *win);
 
 };
 

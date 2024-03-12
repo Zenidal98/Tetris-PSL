@@ -24,6 +24,7 @@ class Square: public Block{
         void deleteold(WINDOW *win);
         void mvsquareright(WINDOW *win);
         void mvsquareleft(WINDOW *win);
+        void mvsquaredown(WINDOW *win);
 
         //chatgpt
         void setTopLeft(int x, int y);
