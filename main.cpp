@@ -35,7 +35,10 @@ int main(){
     int xLoc = xStart;
     int yLoc = yStart;
 
-    WINDOW *win = newwin(HEIGHT, WIDTH, yStart, xStart);
+    WINDOW *playwin = newwin(HEIGHT, WIDTH, yStart, xStart);
+    WINDOW *scorewin = newwin(HEIGHT, WIDTH/2+3, yStart, WIDTH+5);
+    box(scorewin, 0, 0);
+    //wrefresh(stdscr);
 
     //square->display(win);
 
@@ -43,8 +46,9 @@ int main(){
         //Block *block = new Block(xLoc, yLoc, rand()%6+1);
         Square *square = new Square(xLoc, yLoc, rand()%6+1);
         //Logics::blockFalling(*block, win);
-        Logics::squareFalling(*square, win);
-        wrefresh(win);
+        Logics::squareFalling(*square, playwin);
+        wrefresh(playwin);
+        wrefresh(scorewin);
     }
 
     getch();
