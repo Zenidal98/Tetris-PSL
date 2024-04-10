@@ -3,6 +3,7 @@
 #include "Block.hpp"
 #include "Square.hpp"
 // Per usare rand()
+#include<string>
 #include <cstdlib>
 #include <ctime>
 
@@ -36,8 +37,10 @@ int main(){
     int yLoc = yStart;
 
     WINDOW *playwin = newwin(HEIGHT, WIDTH, yStart, xStart);
-    WINDOW *scorewin = newwin(HEIGHT, WIDTH/2+3, yStart, WIDTH+5);
+    WINDOW *scorewin = newwin(HEIGHT, WIDTH, yStart, WIDTH+5);
     box(scorewin, 0, 0);
+    string Score = "Score: "; // to_string(actualScore);
+    string Time = "Time: "; // to_string(actualTime);
     //wrefresh(stdscr);
 
     //square->display(win);
@@ -47,6 +50,8 @@ int main(){
         Square *square = new Square(xLoc, yLoc, rand()%6+1);
         //Logics::blockFalling(*block, win);
         Logics::squareFalling(*square, playwin);
+        mvwprintw(scorewin,1,1,Score.c_str());
+        mvwprintw(scorewin,5,1,Time.c_str());
         wrefresh(playwin);
         wrefresh(scorewin);
     }
