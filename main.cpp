@@ -37,21 +37,22 @@ int main(){
     int yLoc = yStart;
 
     WINDOW *playwin = newwin(HEIGHT, WIDTH, yStart, xStart);
-    WINDOW *scorewin = newwin(HEIGHT, WIDTH, yStart, WIDTH+5);
-    box(scorewin, 0, 0);
-    string Score = "Score: "; // to_string(actualScore);
-    string Time = "Time: "; // to_string(actualTime);
+    WINDOW *scorewin = newwin(HEIGHT, WIDTH+3, yStart, WIDTH+5);
+    box(scorewin,0,0);
+    string Score = "Score: "; //+ to_string(actualScore);
+    string Time = "Time: "; //+ to_string(actualTime);
+    string HaveFun = "Have fun :)";
     //wrefresh(stdscr);
-
     //square->display(win);
-
     while(true){
         //Block *block = new Block(xLoc, yLoc, rand()%6+1);
         Square *square = new Square(xLoc, yLoc, rand()%6+1);
         //Logics::blockFalling(*block, win);
         Logics::squareFalling(*square, playwin);
+        //in questo esatto punto va inserito il cancellatore di righe e l'aggiungi punti
         mvwprintw(scorewin,1,1,Score.c_str());
-        mvwprintw(scorewin,5,1,Time.c_str());
+        mvwprintw(scorewin,8,1,Time.c_str());
+        mvwprintw(scorewin,15,1,HaveFun.c_str());
         wrefresh(playwin);
         wrefresh(scorewin);
     }
