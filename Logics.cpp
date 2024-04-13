@@ -15,6 +15,14 @@ void Logics::blockFalling(Block &block, WINDOW *win){
         else if(ch == 2){
             block.mvright(win);
         }
+
+
+        //codice di prova per andare verso il basso
+        else if(ch == 3){
+            block.mvdown(win);
+        }
+
+
         // sposta il blocco verso il basso
         block.setyLoc(block.getyLoc()+1);
         // mostra blocco
@@ -39,6 +47,12 @@ void Logics::squareFalling(Square &square, WINDOW *win){
             square.mvsquareright(win);
         }
 
+
+        // codice di prova per basso
+        else if(ch == 3){
+            square.mvsquaredown(win);
+        }
+
         // ancora chatgpt code, dovrebbe spostare ognuno dei quattro blocchi verso il basso
         square.setTopLeft(square.getTopLeft().getxLoc(), square.getTopLeft().getyLoc()+1);
         square.setTopRight(square.getTopRight().getxLoc(), square.getTopRight().getyLoc()+1);
@@ -60,6 +74,8 @@ int Logics::getInput(){
             return 1;
         case 'd':
             return 2;
+        case 's':
+            return 3;
         default:
             return 0;
     }
