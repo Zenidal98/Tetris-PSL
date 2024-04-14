@@ -42,6 +42,10 @@ int main(){
     string Score = "Score: "; //+ to_string(actualScore);
     string Time = "Time: "; //+ to_string(actualTime);
     string HaveFun = "Have fun :)";
+    string Press = "Use letters";
+    string Press2 = "A,S and D";
+    string Press3 = "to play !";
+
     //wrefresh(stdscr);
     //square->display(win);
     while(true){
@@ -52,6 +56,9 @@ int main(){
         //in questo esatto punto va inserito il cancellatore di righe e l'aggiungi punti
         mvwprintw(scorewin,1,1,Score.c_str());
         mvwprintw(scorewin,8,1,Time.c_str());
+        mvwprintw(scorewin,11,1,Press.c_str());
+        mvwprintw(scorewin,12,1,Press2.c_str());
+        mvwprintw(scorewin,13,1,Press3.c_str());
         mvwprintw(scorewin,15,1,HaveFun.c_str());
         wrefresh(playwin);
         wrefresh(scorewin);
