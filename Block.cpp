@@ -66,9 +66,11 @@ void Block::mvleft(WINDOW *win){
 }
 
 void Block::mvdown(WINDOW *win){
-    yLoc++;
-    if(yLoc >= HEIGHT-1){
-        yLoc = HEIGHT-1;
+    if(yLoc++ == ' '){
+        yLoc++;
+        if(yLoc >= HEIGHT-1){
+            yLoc = HEIGHT-1;
+        }
     }
 }
 

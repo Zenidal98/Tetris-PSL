@@ -61,7 +61,7 @@ void Logics::squareFalling(Square &square, WINDOW *win){
 
         // mostra quadrato
         square.display(win);
-        napms(350);
+        napms(200);
     }
 }
 
