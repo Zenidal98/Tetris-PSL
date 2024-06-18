@@ -14,6 +14,8 @@ class Logics{
         static void blockFalling(Block &block, WINDOW *win);
         // caduta quadrato (4 blocchi)
         static void squareFalling(Square &square, WINDOW *win);
+        // controlla e elimina righe piene
+        static void checkRows(WINDOW *win);  
 };
 
 #endif

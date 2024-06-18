@@ -66,6 +66,7 @@ void Logics::squareFalling(Square &square, WINDOW *win){
 }
 
 
+
 // a per andare a sinistra, d per andare a destra
 int Logics::getInput(){
     int ch = getch();
@@ -80,3 +81,34 @@ int Logics::getInput(){
             return 0;
     }
 }
+
+
+
+void Logics::checkRows(WINDOW *win){
+     for(int y=0; y<21; y++){
+         bool full = true;               // assumiamo la riga piena
+         for(int x=0; x<11; x++){
+             char ch = mvwinch(win, y, x) & A_CHARTEXT;
+             if(ch!='O'){
+                full = false;
+             }
+         }
+         if(full == true){
+                                            //copiamo quello che c'è sopra con una nuova variabile
+            for(int r=y; r>0; r--){
+               for(int x=0; x<11; x++){
+                  char ch=mvwinch(win, r-1,x) & A_CHARTEXT;
+                  mvwaddch(win, r, x, ch);  //copia il carattere nella riga corrente
+               }
+            }
+                                            //cancella la prima riga
+            for (int x = 0; x < 10; x++) {
+                    mvwaddch(win, 0, x, ' ');
+            }
+         wrefresh(win);
+         }
+     }
+}
+
+
+

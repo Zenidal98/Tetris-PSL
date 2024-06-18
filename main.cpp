@@ -54,6 +54,7 @@ int main(){
         //Logics::blockFalling(*block, win);
         Logics::squareFalling(*square, playwin);
         //in questo esatto punto va inserito il cancellatore di righe e l'aggiungi punti
+        Logics::checkRows(playwin);
         mvwprintw(scorewin,1,1,Score.c_str());
         mvwprintw(scorewin,8,1,Time.c_str());
         mvwprintw(scorewin,11,1,Press.c_str());
