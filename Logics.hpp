@@ -16,6 +16,8 @@ class Logics{
         static void squareFalling(Square &square, WINDOW *win);
         // controlla e elimina righe piene
         static void checkRows(WINDOW *win);  
+        // caduta tetromino 
+        static void tetrominoFalling(Tetromino &tetromino, WINDOW *win);
 };
 
 #endif

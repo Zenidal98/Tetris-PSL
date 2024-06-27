@@ -110,5 +110,29 @@ void Logics::checkRows(WINDOW *win){
      }
 }
 
+void Logics::TetrominoFalling(Tetromino &tetromino, Window *win){
+    
+    // non so a cosa serva, possiamo anche toglierlo se funziona uguale
+    timeout(0);
+
+    // grid è da passare come parametro a logics? credo di si
+    while(!tetromino.isColliding(tetromino, grid, 0, 1)){
+
+        int ch = getInput();
+        if(ch == 1){
+            tetromino.moveLeft();
+        }
+        else if (ch == 2){
+            tetromino.moveRight();
+        }
+        else if (ch == 3){
+            tetromino.moveDown();
+        }
+
+        tetromino.display(win);
+        napms(200);
+    }
+}
+
 
 
