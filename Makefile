@@ -25,5 +25,7 @@ Menu.o:Menu.cpp
 Tutils.o:Tutils.cpp
 	g++ -c Tutils.cpp
 
+Grid.o:Grid.cpp 
+	g++ -c Grid.cpp 
 clean:
 	rm -f *.o Tetris-PSL
