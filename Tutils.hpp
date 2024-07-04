@@ -1,29 +1,55 @@
 #ifndef TUTILS_HPP
 #define TUTILS_HPP
 
-// Include ncurses for potential future use (if needed for drawing)
-#include <ncurses.h>
 #include <vector>
+#include <iostream>
 #include <cstdlib>
 #include <ctime>
-
+#include <algorithm>
 using namespace std;
 
-const int width = 10;
-const int height = 20;
+class Tetromino {
+public:
+  // Constructor to create a Tetromino with a random shape and initial position
+  Tetromino();
 
-// Structure to represent a tetromino
-struct Tetromino {
-    vector<vector<int>> shape;  // Stores the block positions of the tetromino
-    int rotation = 0;           // Current rotation state (0-3)
-    int x = 0;                  // X-coordinate of the tetromino
-    int y = 0;                  // Y-coordinate of the tetromino
+  // Create a clone of a given Tetromino
+  Tetromino(const Tetromino& other);
+
+  // Move the tetromino in different directions
+  void moveUp();
+  void moveDown();
+  void moveRight();
+  void moveLeft();
+
+  // Rotate the tetromino 90 degrees
+  void rotateTetromino(Tetromino falling_block);
+
+  // Check for collision
+  bool isColliding(const Tetromino& block, const std::vector<std::vector<int>>& grid, int dx = 0, int dy = 0);
+
+  // Define the static shapes array
+  static const int shapes[7][4][4];
+
+private:
+  // Tetromino shape
+  int shape[4][4];
+
+  // Current position (x, y)
+  int x;
+  int y;
+
+  // Rotation state
+  int rotation;
+
+  // Helper function to copy shapes
+  void copyShape(const int src[4][4], int dest[4][4]);
+
+  // Accessors
+  std::vector<std::vector<int>> getShape() const;
+  int getX() const;
+  int getY() const;
+  int getRotation() const;
 };
-
-// Define all seven tetrominos using the Tetromino structure
-extern const vector<Tetromino> tetrominoes;  // Defined outside the header for efficiency
-
-// Function to check for collisions with existing blocks and walls
-bool isColliding(const Tetromino& tetromino, const vector<vector<int>>& grid);
 
 #endif // TUTILS_HPP
