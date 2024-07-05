@@ -1,7 +1,5 @@
 #include <ncurses.h>
 #include "Logics.hpp"
-#include "Block.hpp"
-#include "Square.hpp"
 #include "Tutils.hpp"
 // Per usare rand()
 #include<string>
@@ -50,11 +48,12 @@ int main(){
     //wrefresh(stdscr);
     //square->display(win);
     while(true){
-        //Block *block = new Block(xLoc, yLoc, rand()%6+1);
-        Square *square = new Square(xLoc, yLoc, rand()%6+1);
+        // Block *block = new Block(xLoc, yLoc, rand()%6+1);
+        // Square *square = new Square(xLoc, yLoc, rand()%6+1);
         Tetromino *tet = new Tetromino();
         //Logics::blockFalling(*block, win);
-        Logics::squareFalling(*square, playwin);
+        //Logics::squareFalling(*square, playwin);
+        Logics::tetrominoFalling(*tet, playwin);
         //in questo esatto punto va inserito il cancellatore di righe e l'aggiungi punti
         Logics::checkRows(playwin);
         mvwprintw(scorewin,1,1,Score.c_str());

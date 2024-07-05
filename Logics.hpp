@@ -2,8 +2,7 @@
 #define LOGICS_HPP
 
 #include <ncurses.h>
-#include "Block.hpp"
-#include "Square.hpp"
+#include "Tutils.hpp"
 #include <cstdlib>
 
 class Logics{
@@ -12,9 +11,9 @@ class Logics{
         static int getInput();
     public:
         // caduta blocco verso il basso
-        static void blockFalling(Block &block, WINDOW *win);
+        // static void blockFalling(Block &block, WINDOW *win);
         // caduta quadrato (4 blocchi)
-        static void squareFalling(Square &square, WINDOW *win);
+        // static void squareFalling(Square &square, WINDOW *win);
         // controlla e elimina righe piene
         static void checkRows(WINDOW *win);  
         // caduta tetromino 

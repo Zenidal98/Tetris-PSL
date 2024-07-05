@@ -1,6 +1,7 @@
 #include "Logics.hpp"
-#include "Tutils.hpp"
 #include "Grid.hpp"
+
+/*
 void Logics::blockFalling(Block &block, WINDOW *win){
     // serve per non bloccare il programma quando non si preme niente
     timeout(0);
@@ -64,7 +65,7 @@ void Logics::squareFalling(Square &square, WINDOW *win){
         square.display(win);
         napms(200);
     }
-}
+}*/
 
 
 
