@@ -1,168 +1,109 @@
 #include "Tutils.hpp"
-#include "Grid.hpp"
+#include <cstdlib> // For rand()
 
+// Define the static shapes array
+const int Tetromino::shapes[7][4][4] = {
+    // Tetromino shapes (as previously defined)
+    {{0,0,0,0}, {1,1,1,1}, {0,0,0,0}, {0,0,0,0}}, // I
+    {{0,0,0,0}, {0,1,1,1}, {0,0,1,0}, {0,0,0,0}}, // T
+    {{0,0,0,0}, {0,1,1,0}, {0,1,1,0}, {0,0,0,0}}, // O
+    {{0,0,0,0}, {0,0,1,1}, {0,1,1,0}, {0,0,0,0}}, // S
+    {{0,0,0,0}, {0,1,1,0}, {0,0,1,1}, {0,0,0,0}}, // Z
+    {{0,0,0,0}, {1,0,0,0}, {1,1,1,0}, {0,0,0,0}}, // J
+    {{0,0,0,0}, {0,0,0,1}, {0,1,1,1}, {0,0,0,0}}  // L
+};
 
-class Tetromino {
-public:
-  // Constructor to create a Tetromino with a random shape and initial position
-  Tetromino(){
+// Constructor to create a Tetromino with a random shape and initial position
+Tetromino::Tetromino() {
     int shapeIndex = rand() % 7; // Get a random shape from the shapes array
     copy(&shapes[shapeIndex][0][0], &shapes[shapeIndex][0][0] + 16, &shape[0][0]);
     x = 10 / 2 - 2;     // Center the tetromino horizontally (adjust offset as needed)
     y = 0;              // Start at the top
     rotation = 0;       // Initial rotation
-    
-  }
-  
-  static const int shapes[7][4][4];
+}
 
-  // Create a clone of a given Tetromino, now probably obsolete
-  Tetromino(const Tetromino& other) {
+// Create a clone of a given Tetromino
+Tetromino::Tetromino(const Tetromino& other) {
     copyShape(other.shape, shape);  // Deep copy the shape
     x = other.x;
     y = other.y;
     rotation = other.rotation;
-  }
+}
 
-  void Tetromino::moveDown() {
+// Move the tetromino down
+void Tetromino::moveDown() {
     y++;
-  }
+}
 
-  void Tetromino::moveRight() {
+// Move the tetromino right
+void Tetromino::moveRight() {
     x++;
-  }
+}
 
-  void Tetromino::moveLeft() {
+// Move the tetromino left
+void Tetromino::moveLeft() {
     x--;
-  }
+}
 
-  void rotateTetromino(Tetromino falling_block){
-    // ruota il tetromino di 90 gradi aggiornando i valori interni delle matrici,
-    // ovviamente aggiornando anche il rotation state. se non dovesse del tutto funzionare,
-    // (andra integrato alle collisoni) mi tocchera definire a mano tutti gli stadi di rotazione
-   /**  if (falling_block.shape.size() != 4 || falling_block.shape[0].size() != 4){
-        return; // per le forme insolite, non so se serve
-    }**/
-
-    // "ombra" temporanea per cambiare la forma 
+// Rotate the tetromino 90 degrees
+void Tetromino::rotateTetromino(Tetromino falling_block) {
     int newShape[4][4];
-    for (int i=0; i<4; i++){
-        for (int j=0; j<4; j++){
-            newShape[i][j] = falling_block.shape[j][3-i];
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            newShape[i][j] = falling_block.shape[j][3 - i];
         }
     }
     int tmp[4][4];
-    copyShape(falling_block.shape, tmp);              //salva forma pre rot
+    copyShape(falling_block.shape, tmp); // Save pre-rotation shape
     copyShape(newShape, falling_block.shape);
-    if(!isColliding(falling_block, g, 0, 0)){         // check collisione post rot
-      falling_block.rotation = (falling_block.rotation + 1) % 4;     
-    }else{ 
-      copyShape(tmp, falling_block.shape);           //revert forma se collide     
-    }   
-  }
+    if (falling_block.isColliding(0,0)==true) { // Check collision post-rotation
+        falling_block.rotation = (falling_block.rotation + 1) % 4;
+    } else {
+        copyShape(tmp, falling_block.shape); // Revert shape if it collides
+    }
+}
 
-  // Function to check for collision (dx and dy to check further positions while moving)
-  bool isColliding(const Tetromino block, const int grid[20][10], int dx = 0, int dy = 0) {
-  // Check for collisions with the grid and potential new position
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      if (block.shape[i][j] == 1 &&
-          (block.y + i + dy < 0 ||  // Check if outside top bound
-           block.y + i + dy >= 20 || // Check if outside bottom bound
-           block.x + j + dx < 0 ||  // Check if outside left bound
-           block.x + j + dx >= 10 || // Check if outside right bound
-           grid[block.y + i + dy][block.x + j + dx] == 1)) {
-         return true;
-       }
-     }
+// Check for collision
+bool Tetromino::isColliding(int dx, int dy) const {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (shape[i][j] == 1) {
+                int newX = x + j + dx;
+                int newY = y + i + dy;
+                if (newX < 0 || newX >= 10 || newY < 0 || newY >= 20 || g[newY][newX] == 1) {
+                    return true;
+                }
+            }
+        }
     }
     return false;
-  }
+}
 
-  void display(WINDOW *win, int col){
+// Display the tetromino
+void Tetromino::display(WINDOW *win, int col) {
     wattron(win, col);
-    for(int i=0;i<4;i++){
-      for(int j=0;j<4;j++){
-        if (shape[i][j]==1){
-          mvwaddch(win, y+i, x+j, 'X');
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (shape[i][j] == 1) {
+                mvwaddch(win, y + i, x + j, 'X');
+            }
         }
-      }
     }
     wattroff(win, col);
-  }
-  
-  void writeToGrid(int grid[20][10]) const {
+}
+
+// Write the tetromino values to the grid
+void Tetromino::writeToGrid(int grid[20][10]) const {
     for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-        if (shape[i][j] == 1) {
-          grid[y + i][x + j] = 1;
+        for (int j = 0; j < 4; j++) {
+            if (shape[i][j] == 1) {
+                grid[y + i][x + j] = 1;
+            }
         }
-      }
     }
-  }
-private:
-  // Tetromino shape
-  int shape[4][4];
+}
 
-  // Current position (x, y)
-  int x;
-  int y;
-
-  // Rotation state
-  int rotation;
-
-  void copyShape(const int src[4][4], int dest[4][4]) {
+// Helper function to copy shapes
+void Tetromino::copyShape(const int src[4][4], int dest[4][4]) {
     std::copy(&src[0][0], &src[0][0] + 16, &dest[0][0]);
-  }
-  
-};
-
-
-// Predefined tetromino shapes (replace with actual definitions from Tutils.hpp)
-   const int Tetromino::shapes[7][4][4] = {
-    
-    // tetramino "I"
-    {{0,0,0,0},
-     {1,1,1,1},
-     {0,0,0,0},
-     {0,0,0,0}},
-        
-    // tetramino "T"
-    {{0,0,0,0},
-     {0,1,1,1},
-     {0,0,1,0},
-     {0,0,0,0}},
-           
-    // Tetromino "O"
-    {{0,0,0,0},
-     {0,1,1,0},
-     {0,1,1,0},
-     {0,0,0,0}},
-        
-    // Tetromino "S"
-    {{0,0,0,0},
-     {0,0,1,1},
-     {0,1,1,0},
-     {0,0,0,0}},
-    
-    // Tetromino "Z"
-    {{0,0,0,0},
-     {0,1,1,0},
-     {0,0,1,1},
-     {0,0,0,0}},
-    
-    // Tetromino "J"
-    {{0,0,0,0},
-     {1,0,0,0},
-     {1,1,1,0},
-     {0,0,0,0}},
-    
-    // Tetromino "L"
-    {{0,0,0,0},
-     {0,0,0,1},
-     {0,1,1,1},
-     {0,0,0,0}},
-    
-};
-
-
+}

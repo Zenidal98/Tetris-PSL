@@ -119,7 +119,7 @@ void Logics::tetrominoFalling(Tetromino &tetromino, WINDOW *win){
     // random color
     int tetroColor = rand()%256;
     // grid è da passare come parametro a logics? credo di si
-    while(!tetromino.isColliding(tetromino, g, 0, 1)){
+    while(!tetromino.isColliding(0,0)){
 
         int ch = getInput();
         if(ch == 1){

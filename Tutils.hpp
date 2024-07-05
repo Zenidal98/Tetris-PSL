@@ -29,7 +29,8 @@ public:
   void rotateTetromino(Tetromino falling_block);
 
   // Check for collision
-  bool isColliding(const Tetromino& block, const int grid[20][10], int dx = 0, int dy = 0);
+  bool isColliding(int dx = 0, int dy = 0) const;
+
 
   // Define the static shapes array
   static const int shapes[7][4][4];

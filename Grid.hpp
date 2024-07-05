@@ -3,14 +3,12 @@
 
 class Grid {
 public:
-
-    static int grid[20][10];
+    static int grid[20][10]; // Static member declaration
 
     Grid();
-    
 };
 
-int Grid::grid[20][10];
-Grid G;
-int (&g)[20][10] = Grid::grid;          // usa g come reference a Grid::grid
+// Reference to the static grid array
+extern int (&g)[20][10];
+
 #endif // GRID_HPP
