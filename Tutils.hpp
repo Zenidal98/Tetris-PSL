@@ -6,6 +6,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <ncurses.h>
+#include "Grid.hpp"
+
 using namespace std;
 
 class Tetromino {
@@ -26,10 +29,12 @@ public:
   void rotateTetromino(Tetromino falling_block);
 
   // Check for collision
-  bool isColliding(const Tetromino& block, const std::vector<std::vector<int>>& grid, int dx = 0, int dy = 0);
+  bool isColliding(const Tetromino& block, const int grid[20][10], int dx = 0, int dy = 0);
 
   // Define the static shapes array
   static const int shapes[7][4][4];
+
+  void display(WINDOW *win);
 
 private:
   // Tetromino shape
@@ -45,11 +50,6 @@ private:
   // Helper function to copy shapes
   void copyShape(const int src[4][4], int dest[4][4]);
 
-  // Accessors
-  std::vector<std::vector<int>> getShape() const;
-  int getX() const;
-  int getY() const;
-  int getRotation() const;
 };
 
 #endif // TUTILS_HPP

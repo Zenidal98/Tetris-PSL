@@ -1,5 +1,6 @@
 #include "Logics.hpp"
 #include "Tutils.hpp"
+#include "Grid.hpp"
 void Logics::blockFalling(Block &block, WINDOW *win){
     // serve per non bloccare il programma quando non si preme niente
     timeout(0);
@@ -110,13 +111,13 @@ void Logics::checkRows(WINDOW *win){
      }
 }
 
-void Logics::TetrominoFalling(Tetromino &tetromino, Window *win){
+void Logics::TetrominoFalling(Tetromino &tetromino, WINDOW *win){
     
     // non so a cosa serva, possiamo anche toglierlo se funziona uguale
     timeout(0);
 
     // grid è da passare come parametro a logics? credo di si
-    while(!tetromino.isColliding(tetromino, grid, 0, 1)){
+    while(!tetromino.isColliding(tetromino, g, 0, 1)){
 
         int ch = getInput();
         if(ch == 1){

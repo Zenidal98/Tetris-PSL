@@ -1,4 +1,5 @@
 #include "Tutils.hpp"
+#include "Grid.hpp"
 
 class Tetromino {
 public:
@@ -20,23 +21,22 @@ public:
     y = other.y;
     rotation = other.rotation;
   }
-
-  
-private:
-  // Tetromino shape
-  int shape[4][4];
-
-  // Current position (x, y)
-  int x;
-  int y;
-
-  // Rotation state
-  int rotation;
-
-  void copyShape(const int src[4][4], int dest[4][4]) {
-    std::copy(&src[0][0], &src[0][0] + 16, &dest[0][0]);
+  void Tetromino::moveUp() {
+    y--;
   }
-  
+
+  void Tetromino::moveDown() {
+    y++;
+  }
+
+  void Tetromino::moveRight() {
+    x++;
+  }
+
+  void Tetromino::moveLeft() {
+    x--;
+  }
+
   void rotateTetromino(Tetromino falling_block){
     // ruota il tetromino di 90 gradi aggiornando i valori interni delle matrici,
     // ovviamente aggiornando anche il rotation state. se non dovesse del tutto funzionare,
@@ -52,12 +52,21 @@ private:
             newShape[i][j] = falling_block.shape[j][3-i];
         }
     }
-    copyShape(falling_block.shape, newShape);
-    falling_block.rotation = (falling_block.rotation + 1) % 4;
+    int tmp[4][4];
+    copyShape(falling_block.shape, tmp);              //salva forma pre rot
+    copyShape(newShape, falling_block.shape);
+    if(!isColliding(falling_block, g, 0, 0)){         // check collisione post rot
+      falling_block.rotation = (falling_block.rotation + 1) % 4;
+      return;
+    }else{ 
+      copyShape(tmp, falling_block.shape);           //revert forma se collide
+      return;
+    }
+    
   }
 
-// Function to check for collision (dx and dy to check further positions while moving)
-  bool isColliding(const Tetromino& block, const vector<vector<int>>& grid, int dx = 0, int dy = 0) {
+  // Function to check for collision (dx and dy to check further positions while moving)
+  bool isColliding(const Tetromino block, const int grid[20][10], int dx = 0, int dy = 0) {
   // Check for collisions with the grid and potential new position
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -74,30 +83,29 @@ private:
     return false;
   }
 
-void Tetromino::moveUp() {
-  if (!isColliding(*this, grid, 0, -1)) { // Check for collision if moved up
-    y--;
+  void display(WINDOW *win){
+    wattron(win, COLOR_PAIR(rand()%256));
+    for(int i=0;i<4;i++){
+      for(int j=0;j<4;j++){
+        
+      }
+    }
   }
-}
+private:
+  // Tetromino shape
+  int shape[4][4];
 
-void Tetromino::moveDown() {
-  if (!isColliding(*this, grid, 0, 1)) { // Check for collision if moved down
-    y++;
+  // Current position (x, y)
+  int x;
+  int y;
+
+  // Rotation state
+  int rotation;
+
+  void copyShape(const int src[4][4], int dest[4][4]) {
+    std::copy(&src[0][0], &src[0][0] + 16, &dest[0][0]);
   }
-}
-
-void Tetromino::moveRight() {
-  if (!isColliding(*this, grid, 1, 0)) { // Check for collision if moved right
-    x++;
-  }
-}
-
-void Tetromino::moveLeft() {
-  if (!isColliding(*this, grid, -1, 0)) { // Check for collision if moved left
-    x--;
-  }
-}
-
+  
 };
 
 
