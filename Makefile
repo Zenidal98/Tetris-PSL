@@ -4,8 +4,8 @@ CFLAGS = -std=c++11 -g -Wall -Wextra
 
 LIBS = -lncurses
 
-Tetris-PSL: main.o Block.o Square.o Logics.o Menu.o
-	g++ main.o Block.o Square.o Logics.o Menu.o Tutils.o -o Tetris-PSL $(LIBS)
+Tetris-PSL: main.o Block.o Square.o Logics.o Menu.o Tutils.o Grid.o
+	g++ main.o Block.o Square.o Logics.o Menu.o Tutils.o Grid.o -o Tetris-PSL $(LIBS)
 
 main.o: main.cpp
 	g++ -c main.cpp

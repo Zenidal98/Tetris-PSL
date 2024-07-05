@@ -13,6 +13,7 @@ using namespace std;
 
 class Tetromino {
 public:
+
   // Constructor to create a Tetromino with a random shape and initial position
   Tetromino();
 
@@ -20,7 +21,6 @@ public:
   Tetromino(const Tetromino& other);
 
   // Move the tetromino in different directions
-  void moveUp();
   void moveDown();
   void moveRight();
   void moveLeft();
@@ -34,12 +34,14 @@ public:
   // Define the static shapes array
   static const int shapes[7][4][4];
 
-  void display(WINDOW *win);
-
+  
+  void display(WINDOW *win, int col);
+  
+  void writeToGrid(int grid[20][10]) const;
 private:
   // Tetromino shape
   int shape[4][4];
-
+  
   // Current position (x, y)
   int x;
   int y;

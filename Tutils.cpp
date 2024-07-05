@@ -1,6 +1,7 @@
 #include "Tutils.hpp"
 #include "Grid.hpp"
 
+
 class Tetromino {
 public:
   // Constructor to create a Tetromino with a random shape and initial position
@@ -10,6 +11,7 @@ public:
     x = 10 / 2 - 2;     // Center the tetromino horizontally (adjust offset as needed)
     y = 0;              // Start at the top
     rotation = 0;       // Initial rotation
+    
   }
   
   static const int shapes[7][4][4];
@@ -20,9 +22,6 @@ public:
     x = other.x;
     y = other.y;
     rotation = other.rotation;
-  }
-  void Tetromino::moveUp() {
-    y--;
   }
 
   void Tetromino::moveDown() {
@@ -56,13 +55,10 @@ public:
     copyShape(falling_block.shape, tmp);              //salva forma pre rot
     copyShape(newShape, falling_block.shape);
     if(!isColliding(falling_block, g, 0, 0)){         // check collisione post rot
-      falling_block.rotation = (falling_block.rotation + 1) % 4;
-      return;
+      falling_block.rotation = (falling_block.rotation + 1) % 4;     
     }else{ 
-      copyShape(tmp, falling_block.shape);           //revert forma se collide
-      return;
-    }
-    
+      copyShape(tmp, falling_block.shape);           //revert forma se collide     
+    }   
   }
 
   // Function to check for collision (dx and dy to check further positions while moving)
@@ -83,11 +79,24 @@ public:
     return false;
   }
 
-  void display(WINDOW *win){
-    wattron(win, COLOR_PAIR(rand()%256));
+  void display(WINDOW *win, int col){
+    wattron(win, col);
     for(int i=0;i<4;i++){
       for(int j=0;j<4;j++){
-        
+        if (shape[i][j]==1){
+          mvwaddch(win, y+i, x+j, 'X');
+        }
+      }
+    }
+    wattroff(win, col);
+  }
+  
+  void writeToGrid(int grid[20][10]) const {
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (shape[i][j] == 1) {
+          grid[y + i][x + j] = 1;
+        }
       }
     }
   }

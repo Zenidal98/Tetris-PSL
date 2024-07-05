@@ -111,11 +111,12 @@ void Logics::checkRows(WINDOW *win){
      }
 }
 
-void Logics::TetrominoFalling(Tetromino &tetromino, WINDOW *win){
+void Logics::tetrominoFalling(Tetromino &tetromino, WINDOW *win){
     
     // non so a cosa serva, possiamo anche toglierlo se funziona uguale
     timeout(0);
-
+    // random color
+    int tetroColor = rand()%256;
     // grid è da passare come parametro a logics? credo di si
     while(!tetromino.isColliding(tetromino, g, 0, 1)){
 
@@ -130,7 +131,7 @@ void Logics::TetrominoFalling(Tetromino &tetromino, WINDOW *win){
             tetromino.moveDown();
         }
 
-        tetromino.display(win);
+        tetromino.display(win, tetroColor);
         napms(200);
     }
 }

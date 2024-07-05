@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include "Block.hpp"
 #include "Square.hpp"
+#include <cstdlib>
 
 class Logics{
     private:

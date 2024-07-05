@@ -2,6 +2,7 @@
 #include "Logics.hpp"
 #include "Block.hpp"
 #include "Square.hpp"
+#include "Tutils.hpp"
 // Per usare rand()
 #include<string>
 #include <cstdlib>
@@ -51,6 +52,7 @@ int main(){
     while(true){
         //Block *block = new Block(xLoc, yLoc, rand()%6+1);
         Square *square = new Square(xLoc, yLoc, rand()%6+1);
+        Tetromino *tet = new Tetromino();
         //Logics::blockFalling(*block, win);
         Logics::squareFalling(*square, playwin);
         //in questo esatto punto va inserito il cancellatore di righe e l'aggiungi punti

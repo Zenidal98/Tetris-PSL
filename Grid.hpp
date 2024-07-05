@@ -12,5 +12,5 @@ public:
 
 int Grid::grid[20][10];
 Grid G;
-int (&g)[20][10] = Grid::grid;
+int (&g)[20][10] = Grid::grid;          // usa g come reference a Grid::grid
 #endif // GRID_HPP
