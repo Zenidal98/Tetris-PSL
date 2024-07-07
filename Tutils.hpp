@@ -1,58 +1,53 @@
 #ifndef TUTILS_HPP
 #define TUTILS_HPP
 
-#include <vector>
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-#include <algorithm>
 #include <ncurses.h>
-#include "Grid.hpp"
+#include <vector>
 
 using namespace std;
 
-class Tetromino {
-public:
+//dimensions of the game board
+const int WIDTH = 10;
+const int HEIGHT = 20;
 
-  // Constructor to create a Tetromino with a random shape and initial position
-  Tetromino();
-
-  // Create a clone of a given Tetromino
-  Tetromino(const Tetromino& other);
-
-  // Move the tetromino in different directions
-  void moveDown();
-  void moveRight();
-  void moveLeft();
-
-  // Rotate the tetromino 90 degrees
-  void rotateTetromino(Tetromino falling_block);
-
-  // Check for collision
-  bool isColliding(int dx = 0, int dy = 0) const;
-
-
-  // Define the static shapes array
-  static const int shapes[7][4][4];
-
-  
-  void display(WINDOW *win, int col);
-  
-  void writeToGrid(int grid[20][10]) const;
-private:
-  // Tetromino shape
-  int shape[4][4];
-  
-  // Current position (x, y)
-  int x;
-  int y;
-
-  // Rotation state
-  int rotation;
-
-  // Helper function to copy shapes
-  void copyShape(const int src[4][4], int dest[4][4]);
-
+// Define the shapes of the tetrominoes
+const std::vector<std::vector<std::vector<int>>> TETROMINOES = {
+    {{1, 1, 1, 1}},          // I
+    {{1, 1, 1}, {0, 1}},     // J
+    {{1, 1, 1}, {1}},        // L
+    {{1, 1}, {1, 1}},        // O
+    {{0, 1, 1}, {1, 1}},     // S
+    {{1, 1, 1}, {0, 1, 0}},  // T
+    {{1, 1, 0}, {0, 1, 1}}   // Z
 };
 
+enum Direction {LEFT, RIGHT, DOWN};
+
+enum TetrominoType{I, J, L, O, S, T, Z, NumTetrominoTypes}; //per randomizzare i tetromini, ultimo numero come controllo
+
+class Game{
+public:
+  Game();
+  ~Game();
+  void start();
+
+private:
+  void init();
+  void draw();
+  void input();
+  void logic();
+  bool checkCollision(int x, int y, const vector<vector<int>>& shape);
+  void rotateTetromino();
+  void mergeTetromino();
+  void clearLines();
+
+  int score;
+  bool gameOver;
+  int currentX, currentY;
+  TetrominoType currentType;
+  vector<vector<int>> board;
+  vector<vector<int>> currentTetromino;
+
+};
+  
 #endif // TUTILS_HPP

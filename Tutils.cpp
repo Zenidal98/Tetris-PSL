@@ -1,109 +1,170 @@
 #include "Tutils.hpp"
-#include <cstdlib> // For rand()
+#include "cstdlib"
+#include "ctime"
 
-// Define the static shapes array
-const int Tetromino::shapes[7][4][4] = {
-    // Tetromino shapes (as previously defined)
-    {{0,0,0,0}, {1,1,1,1}, {0,0,0,0}, {0,0,0,0}}, // I
-    {{0,0,0,0}, {0,1,1,1}, {0,0,1,0}, {0,0,0,0}}, // T
-    {{0,0,0,0}, {0,1,1,0}, {0,1,1,0}, {0,0,0,0}}, // O
-    {{0,0,0,0}, {0,0,1,1}, {0,1,1,0}, {0,0,0,0}}, // S
-    {{0,0,0,0}, {0,1,1,0}, {0,0,1,1}, {0,0,0,0}}, // Z
-    {{0,0,0,0}, {1,0,0,0}, {1,1,1,0}, {0,0,0,0}}, // J
-    {{0,0,0,0}, {0,0,0,1}, {0,1,1,1}, {0,0,0,0}}  // L
-};
-
-// Constructor to create a Tetromino with a random shape and initial position
-Tetromino::Tetromino() {
-    int shapeIndex = rand() % 7; // Get a random shape from the shapes array
-    copy(&shapes[shapeIndex][0][0], &shapes[shapeIndex][0][0] + 16, &shape[0][0]);
-    x = 10 / 2 - 2;     // Center the tetromino horizontally (adjust offset as needed)
-    y = 0;              // Start at the top
-    rotation = 0;       // Initial rotation
+Game::Game() {
+    init();
 }
 
-// Create a clone of a given Tetromino
-Tetromino::Tetromino(const Tetromino& other) {
-    copyShape(other.shape, shape);  // Deep copy the shape
-    x = other.x;
-    y = other.y;
-    rotation = other.rotation;
+Game::~Game() {
+    endwin();
+}
+ //initializza ncurses e la board
+void Game::init() {
+    initscr();
+    cbreak();
+    noecho();
+    curs_set(FALSE);
+    keypad(stdscr, TRUE);
+    timeout(100);
+
+    // definisce le coppie tetramino colore
+    init_pair(I + 1, COLOR_CYAN, COLOR_BLACK);
+    init_pair(J + 1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(L + 1, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(O + 1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(S + 1, COLOR_GREEN, COLOR_BLACK);
+    init_pair(T + 1, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(Z + 1, COLOR_RED, COLOR_BLACK);
+
+    srand(time(NULL));
+    score = 0;
+    gameOver = false;
+    board = vector<vector<int>>(HEIGHT, vector<int>(WIDTH, 0));
+    currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
+    currentTetromino = TETROMINOES[currentType];
+    currentX = WIDTH / 2 - currentTetromino[0].size() / 2;
+    currentY = 0;
 }
 
-// Move the tetromino down
-void Tetromino::moveDown() {
-    y++;
+//parte il loop del gioco
+void Game::start() {
+    while (!gameOver) {
+        draw();
+        input();
+        logic();
+    }
 }
 
-// Move the tetromino right
-void Tetromino::moveRight() {
-    x++;
-}
-
-// Move the tetromino left
-void Tetromino::moveLeft() {
-    x--;
-}
-
-// Rotate the tetromino 90 degrees
-void Tetromino::rotateTetromino(Tetromino falling_block) {
-    int newShape[4][4];
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            newShape[i][j] = falling_block.shape[j][3 - i];
+//printa a schermo i blocchi
+void Game::draw() {
+    clear();
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (board[y][x]) {
+                mvprintw(y, x*2, "[]");     // il *2 rende [] più "quadrato"
+            }
         }
     }
-    int tmp[4][4];
-    copyShape(falling_block.shape, tmp); // Save pre-rotation shape
-    copyShape(newShape, falling_block.shape);
-    if (falling_block.isColliding(0,0)==true) { // Check collision post-rotation
-        falling_block.rotation = (falling_block.rotation + 1) % 4;
-    } else {
-        copyShape(tmp, falling_block.shape); // Revert shape if it collides
+
+    for (int y = 0; y < currentTetromino.size(); y++) {
+        for (int x = 0; x < currentTetromino[y].size(); x++) {
+            if (currentTetromino[y][x]) {
+                mvprintw(currentY + y, (currentX + x)*2, "[]");
+            }
+        }
+    }
+
+    mvprintw(0, WIDTH * 2 + 2,"Score: %d", score);
+    refresh();
+}
+
+//handler dei comandi di movimento e rotazione
+void Game::input(){
+    int ch = getch();
+    switch(ch) {
+        case KEY_LEFT:
+            if (!checkCollision(currentX - 1, currentY, currentTetromino)) currentX--;
+            break;
+        case KEY_RIGHT:
+            if (!checkCollision(currentX + 1, currentY, currentTetromino)) currentX++;
+            break;
+        case KEY_DOWN:
+            if(!checkCollision(currentX, currentY + 1, currentTetromino)) currentY--;
+            else{
+                mergeTetromino();     //attacca al "fondo"
+                currentTetromino = TETROMINOES[rand() % TETROMINOES.size()]; //istanzia nuovo blocco in cima
+                currentX = WIDTH / 2 - currentTetromino[0].size() / 2;
+                currentY = 0;
+                if(checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
+            }
+            break;
+        case 'q':
+            gameOver = true;
+            break;
+        case ' ':
+            rotateTetromino();
+            break;
     }
 }
 
-// Check for collision
-bool Tetromino::isColliding(int dx, int dy) const {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (shape[i][j] == 1) {
-                int newX = x + j + dx;
-                int newY = y + i + dy;
-                if (newX < 0 || newX >= 10 || newY < 0 || newY >= 20 || g[newY][newX] == 1) {
-                    return true;
-                }
+//handler per merge causati da "gravità" e pulizia righe
+void Game::logic(){
+    if (!checkCollision(currentX, currentY + 1, currentTetromino)) {
+        currentY++;
+    } else {
+        mergeTetromino();
+        currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
+        currentTetromino = TETROMINOES[currentType];
+        currentX = WIDTH / 2 - currentTetromino[0].size() / 2;
+        currentY = 0;
+        if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
+    }
+    clearLines;
+}
+
+//controllo delle collisioni con la board
+bool Game::checkCollision(int x, int y, const vector<vector<int>>& shape) {
+    for (int j = 0; j < shape.size(); j++) {
+        for (int i = 0; i < shape[j].size(); i++) {
+            if (shape[j][i]) {
+                if (x + i < 0 || x + i >= WIDTH || y + j >= HEIGHT || board[y + j][x + i]) return true;
             }
         }
     }
     return false;
 }
 
-// Display the tetromino
-void Tetromino::display(WINDOW *win, int col) {
-    wattron(win, col);
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (shape[i][j] == 1) {
-                mvwaddch(win, y + i, x + j, 'X');
-            }
-        }
-    }
-    wattroff(win, col);
-}
 
-// Write the tetromino values to the grid
-void Tetromino::writeToGrid(int grid[20][10]) const {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (shape[i][j] == 1) {
-                grid[y + i][x + j] = 1;
-            }
+void Game::rotateTetromino() {
+    vector<vector<int>> rotated; // get rotated, idiot
+    for (int x = 0; x < currentTetromino[0].size(); x++) {
+        vector<int> newRow;
+        for (int y = currentTetromino.size() - 1; y >= 0; y++) {
+            newRow.push_back(currentTetromino[y][x]);
         }
+        rotated.push_back(newRow);
+    }
+    if (!checkCollision(currentX, currentY, rotated)) {
+        currentTetromino = rotated;
     }
 }
 
-// Helper function to copy shapes
-void Tetromino::copyShape(const int src[4][4], int dest[4][4]) {
-    std::copy(&src[0][0], &src[0][0] + 16, &dest[0][0]);
+// attacca il tetramino alla board
+void Game::mergeTetromino() {
+    for (int y = 0; y < currentTetromino.size(); y++) {
+        for (int x = 0; x < currentTetromino[y].size(); x++) {
+            if (currentTetromino[y][x]) {
+                board[currentY + y][currentX + x] = currentType + 1;
+            }
+        }
+    }
+}
+
+void Game::clearLines() {
+    for (int y = HEIGHT - 1; y >= 0; y--) {
+        bool fullLine = true;
+        for (int x = 0; x < WIDTH; x++) {
+            if (!board[y][x]) {
+                fullLine = false;
+                break;
+            }
+        }
+        if (fullLine) {
+            board.erase(board.begin() + y);                 //cancella la fullLine (vector riattacca le righe sopra e sotto)
+            board.insert(board.begin(), vector<int>(WIDTH, 0)); //riga vuota in cima
+            score += 100;    //placeholder for the score system
+            y++;
+        }
+    }
 }
