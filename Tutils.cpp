@@ -110,7 +110,7 @@ void Game::logic(){
         currentY = 0;
         if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
     }
-    clearLines;
+    clearLines();
 }
 
 //controllo delle collisioni con la board
@@ -130,12 +130,14 @@ void Game::rotateTetromino() {
     vector<vector<int>> rotated; // get rotated, idiot
     for (int x = 0; x < currentTetromino[0].size(); x++) {
         vector<int> newRow;
-        for (int y = currentTetromino.size() - 1; y >= 0; y++) {
+        for (int y = currentTetromino.size() - 1; y >= 0; y--) {
             newRow.push_back(currentTetromino[y][x]);
         }
         rotated.push_back(newRow);
     }
-    if (!checkCollision(currentX, currentY, rotated)) {
+    if (!checkCollision(currentX, currentY, rotated) &&
+        currentX + rotated[0].size() <= WIDTH &&           //collisioni create ruotando contro i bordi della board
+        currentY + rotated.size() <= HEIGHT) {            //
         currentTetromino = rotated;
     }
 }

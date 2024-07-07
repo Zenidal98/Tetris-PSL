@@ -1,16 +1,20 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -lncurses
+CXXFLAGS = -Wall -g
+LDFLAGS = -lncurses
 
-LIBS = -lncurses
+SRCS = Tutils.cpp main.cpp
+OBJS = $(SRCS:.cpp=.o)
+EXEC = tetris
 
-SRC = src/main.cpp src/Tutils.cpp
-OBJ = $(SRC:.cpp=.o)
-TARGET = tetris
+all: $(EXEC)
 
-all: $(TARGET)
+$(EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $(EXEC) $(LDFLAGS)
 
-$(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJS) $(EXEC)
+
+.PHONY: clean
