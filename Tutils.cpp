@@ -96,6 +96,7 @@ void Game::input() {
             rotateTetromino();
             break;
     }
+    napms(50);
 }
 
 void Game::logic() {
