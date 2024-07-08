@@ -129,7 +129,16 @@ const vector<vector<vector<vector<int>>>> TETROMINO_ROTATIONS = {
         {0, 0, 1},
         {0, 1, 1},
         {0, 1, 0}
-    }}
+    }, {
+        {0, 0, 0},
+        {1, 1, 0},
+        {0, 1, 1},
+    }, {
+        {0, 0, 1},
+        {0, 1, 1},
+        {0, 1, 0},
+    }
+    }
 };
   
 enum Direction {LEFT, RIGHT, DOWN};

@@ -113,18 +113,27 @@ void Game::logic() {
 }
 
 bool Game::checkCollision(int x, int y, const vector<vector<int>>& shape) {
+    // Iterate over the shape of the tetromino
     for (int j = 0; j < shape.size(); j++) {
         for (int i = 0; i < shape[j].size(); i++) {
+            // Check if the cell in the shape is filled
             if (shape[j][i]) {
-                // Check for board boundaries and collisions
-                if (x + i < 0 || x + i >= WIDTH || y + j < 0 || y + j >= HEIGHT || board[y + j][x + i]) {
-                    return true;
+                // Calculate board coordinates
+                int boardX = x + i;
+                int boardY = y + j;
+
+                // Check boundaries and collision with filled cells on the board
+                if (boardX < 0 || boardX >= WIDTH || boardY >= HEIGHT || boardY < 0 || board[boardY][boardX]) {
+                    return true;  // Collision detected
                 }
             }
         }
     }
-    return false;
+    return false;  // No collision detected
 }
+
+
+
 
 void Game::rotateTetromino() {
     int nextRotation = (currentRotation + 1) % 4;
