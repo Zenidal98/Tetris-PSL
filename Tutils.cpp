@@ -1,13 +1,9 @@
 #include "Tutils.hpp"
-#include "cstdlib"
-#include "ctime"
+#include <cstdlib>
+#include <ctime>
 
 Game::Game() {
     init();
-}
-
-Game::~Game() {
-    endwin();
 }
 
 void Game::init() {
@@ -31,11 +27,19 @@ void Game::init() {
     srand(time(NULL));
     score = 0;
     gameOver = false;
-    board = vector<vector<int>>(HEIGHT, vector<int>(WIDTH, 0));
-    currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
+    for (int i = 0; i < HEIGHT; ++i) {
+        for (int j = 0; j < WIDTH; ++j) {
+            board[i][j] = 0;
+        }
+    }
+    currentType = TetrominoType(rand() % NumTetrominoTypes);
     currentRotation = 0;
-    currentTetromino = TETROMINO_ROTATIONS[currentType][currentRotation];
-    currentX = WIDTH / 2 - currentTetromino[0].size() / 2;
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+        }
+    }
+    currentX = WIDTH / 2 - 2;
     currentY = 0;
 }
 
@@ -45,22 +49,23 @@ void Game::start() {
         input();
         logic();
     }
+    endwin();
 }
 
 void Game::draw() {
     clear();
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            if (board[y][x]) {  
-              mvprintw(y, x*2, "[]"); // x*2 makes "[]" more "square"
+            if (board[y][x]) {
+                mvprintw(y, x * 2, "[]"); // x*2 makes "[]" more "square"
             }
         }
     }
 
-    for (int y = 0; y < currentTetromino.size(); y++) {
-        for (int x = 0; x < currentTetromino[y].size(); x++) {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
             if (currentTetromino[y][x]) {
-                mvprintw(currentY + y, (currentX + x)*2, "[]");
+                mvprintw(currentY + y, (currentX + x) * 2, "[]");
             }
         }
     }
@@ -83,8 +88,13 @@ void Game::input() {
             else {
                 mergeTetromino();
                 currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
-                currentTetromino = TETROMINO_ROTATIONS[currentType][currentRotation];
-                currentX = WIDTH / 2 - currentTetromino[0].size() / 2;
+                currentRotation = 0;
+                for (int i = 0; i < 4; ++i) {
+                    for (int j = 0; j < 4; ++j) {
+                        currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+                    }
+                }
+                currentX = WIDTH / 2 - 2;
                 currentY = 0;
                 if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
             }
@@ -105,18 +115,23 @@ void Game::logic() {
     } else {
         mergeTetromino();
         currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
-        currentTetromino = TETROMINO_ROTATIONS[currentType][currentRotation];
-        currentX = WIDTH / 2 - currentTetromino[0].size() / 2;
+        currentRotation = 0;
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+            }
+        }
+        currentX = WIDTH / 2 - 2;
         currentY = 0;
         if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
     }
     clearLines();
 }
 
-bool Game::checkCollision(int x, int y, const vector<vector<int>>& shape) {
+bool Game::checkCollision(int x, int y, const int shape[4][4]) {
     // Iterate over the shape of the tetromino
-    for (int j = 0; j < shape.size(); j++) {
-        for (int i = 0; i < shape[j].size(); i++) {
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
             // Check if the cell in the shape is filled
             if (shape[j][i]) {
                 // Calculate board coordinates
@@ -133,23 +148,23 @@ bool Game::checkCollision(int x, int y, const vector<vector<int>>& shape) {
     return false;  // No collision detected
 }
 
-
-
-
 void Game::rotateTetromino() {
     int nextRotation = (currentRotation + 1) % 4;
-    const vector<vector<int>>& rotated = TETROMINO_ROTATIONS[currentType][nextRotation];
+    const int (*rotated)[4] = TETROMINO_ROTATIONS[currentType][nextRotation];
 
     if (!checkCollision(currentX, currentY, rotated)) {
-        currentTetromino = rotated;
         currentRotation = nextRotation;
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                currentTetromino[i][j] = rotated[i][j];
+            }
+        }
     }
 }
 
-
 void Game::mergeTetromino() {
-    for (int y = 0; y < currentTetromino.size(); y++) {
-        for (int x = 0; x < currentTetromino[y].size(); x++) {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
             if (currentTetromino[y][x]) {
                 board[currentY + y][currentX + x] = currentType + 1;
             }
@@ -167,11 +182,13 @@ void Game::clearLines() {
             }
         }
         if (fullLine) {
-            board.erase(board.begin() + y);
-            board.insert(board.begin(), vector<int>(WIDTH, 0));
+            for (int i = y; i > 0; --i) {
+                for (int x = 0; x < WIDTH; ++x) {
+                    board[i][x] = board[i - 1][x];
+                }
+            }
             score += 100;
             y++;
         }
     }
 }
-
