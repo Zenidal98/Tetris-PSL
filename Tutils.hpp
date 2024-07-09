@@ -8,7 +8,7 @@ const int WIDTH = 10;
 const int HEIGHT = 20;
 
 // Define the shapes of the tetrominoes
-const int TETROMINO_ROTATIONS[][4][4][4] = {
+const int TETROMINO_ROTATIONS[7][4][4][4] = {
     // I
     {
         {
