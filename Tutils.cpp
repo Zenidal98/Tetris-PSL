@@ -57,7 +57,9 @@ void Game::draw() {
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
             if (board[y][x]) {
+                attron(COLOR_PAIR(board[y][x]));
                 mvprintw(y, x * 2, "[]"); // x*2 makes "[]" more "square"
+                attroff(COLOR_PAIR(board[y][x]));
             }
         }
     }
@@ -65,7 +67,9 @@ void Game::draw() {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             if (currentTetromino[y][x]) {
+                attron(COLOR_PAIR(currentType + 1));
                 mvprintw(currentY + y, (currentX + x) * 2, "[]");
+                attroff(COLOR_PAIR(currentType + 1));
             }
         }
     }
