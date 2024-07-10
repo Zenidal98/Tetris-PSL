@@ -53,6 +53,43 @@ void Game::start() {
 }
 
 void Game::draw() {
+    // Create an off-screen window
+    WINDOW *offscreen = newwin(HEIGHT, WIDTH * 2 + 20, 0, 0);
+
+    // Draw the board to the off-screen window
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (board[y][x]) {
+                wattron(offscreen, COLOR_PAIR(board[y][x]));
+                mvwprintw(offscreen, y, x * 2, "[]"); // x*2 makes "[]" more "square"
+                wattroff(offscreen, COLOR_PAIR(board[y][x]));
+            }
+        }
+    }
+
+    // Draw the current tetromino to the off-screen window
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (currentTetromino[y][x]) {
+                wattron(offscreen, COLOR_PAIR(currentType + 1));
+                mvwprintw(offscreen, currentY + y, (currentX + x) * 2, "[]");
+                wattroff(offscreen, COLOR_PAIR(currentType + 1));
+            }
+        }
+    }
+
+    // Draw the score to the off-screen window
+    mvwprintw(offscreen, 0, WIDTH * 2 + 2, "Score: %d", score);
+
+    // Copy the off-screen window to the main screen
+    overwrite(offscreen, stdscr);
+    refresh();
+
+    // Free the off-screen window
+    delwin(offscreen);
+}
+
+/*void Game::draw() {
     clear();
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
@@ -76,7 +113,7 @@ void Game::draw() {
 
     mvprintw(0, WIDTH * 2 + 2, "Score: %d", score);
     refresh();
-}
+}*/
 
 void Game::input() {
     int ch = getch();
