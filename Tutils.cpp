@@ -49,7 +49,7 @@ void Game::start() {
         input();
         logic();
     }
-    endwin();
+   // endwin();
 }
 
 void Game::draw() {
@@ -128,7 +128,7 @@ void Game::input() {
             if (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
             else {
                 mergeTetromino();
-                currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
+                currentType = TetrominoType(rand() % NumTetrominoTypes);
                 currentRotation = 0;
                 for (int i = 0; i < 4; ++i) {
                     for (int j = 0; j < 4; ++j) {
@@ -146,8 +146,12 @@ void Game::input() {
         case ' ':
             rotateTetromino();
             break;
+        case 'r':
+            Game::init();
+            Game::start();
+            break;
     }
-    napms(50);
+    napms(100);
 }
 
 void Game::logic() {
@@ -155,7 +159,7 @@ void Game::logic() {
         currentY++;
     } else {
         mergeTetromino();
-        currentType = static_cast<TetrominoType>(rand() % NumTetrominoTypes);
+        currentType = TetrominoType(rand() % NumTetrominoTypes);
         currentRotation = 0;
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
