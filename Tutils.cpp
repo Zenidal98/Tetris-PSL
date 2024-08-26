@@ -43,6 +43,8 @@ void Game::init() {
     }
     currentX = WIDTH / 2 - 2;
     currentY = 0;
+
+    startTime = std::chrono::steady_clock::now(); //important so the time is resetted every match
 }
 
 void Game::showGameOverScreen() {
