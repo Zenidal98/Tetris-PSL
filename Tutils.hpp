@@ -2,6 +2,7 @@
 #define TUTILS_HPP
 
 #include <ncurses.h>
+#include <chrono>
 
 // Dimensions of the game board
 const int WIDTH = 10;
@@ -177,6 +178,11 @@ private:
     int board[HEIGHT][WIDTH];
     int currentTetromino[4][4];
     int currentRotation;
+
+    std::chrono::steady_clock::time_point startTime;
+    int elapsedTime;
+
+
 };
 
 #endif // TUTILS_HPP

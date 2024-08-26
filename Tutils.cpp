@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 
-Game::Game() {
+Game::Game() : startTime(std::chrono::steady_clock::now()), elapsedTime(0) {
     init();
 }
 
@@ -80,6 +80,11 @@ void Game::draw() {
 
     // Draw the score to the off-screen window
     mvwprintw(offscreen, 0, WIDTH * 2 + 2, "Score: %d", score);
+
+    // Track elapsed time
+    auto now = std::chrono::steady_clock::now();
+    elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+    mvwprintw(offscreen, 2, WIDTH * 2 + 2, "Time: %d", elapsedTime);
 
     // Copy the off-screen window to the main screen
     overwrite(offscreen, stdscr);
