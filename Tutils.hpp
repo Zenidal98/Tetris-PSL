@@ -182,6 +182,8 @@ private:
     std::chrono::steady_clock::time_point startTime;
     int elapsedTime;
 
+    bool paused = false;
+
 
 };
 

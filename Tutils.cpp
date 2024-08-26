@@ -155,6 +155,13 @@ void Game::input() {
             Game::init();
             Game::start();
             break;
+        case 'p':
+            paused = !paused;
+            if(paused){
+                nodelay(stdscr, FALSE);
+            }
+            else
+                nodelay(stdscr, TRUE);
     }
     napms(100);
 }
