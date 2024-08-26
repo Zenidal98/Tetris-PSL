@@ -170,6 +170,7 @@ private:
     void rotateTetromino();
     void mergeTetromino();
     void clearLines();
+    void showGameOverScreen();
 
     int score;
     bool gameOver;
@@ -184,6 +185,12 @@ private:
 
     bool paused = false;
 
+    enum class GameState{
+       Playing,
+       GameOver
+    };
+
+    GameState state;
 
 };
 

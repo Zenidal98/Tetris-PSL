@@ -2,11 +2,13 @@
 #include <cstdlib>
 #include <ctime>
 
-Game::Game() : startTime(std::chrono::steady_clock::now()), elapsedTime(0) {
+Game::Game() : startTime(std::chrono::steady_clock::now()), elapsedTime(0), state(GameState::Playing) {
     init();
 }
 
 void Game::init() {
+    clear(); // need in case of previous gameover and previous match
+    refresh();
     initscr();
     start_color();
     cbreak();
@@ -43,12 +45,43 @@ void Game::init() {
     currentY = 0;
 }
 
+void Game::showGameOverScreen() {
+    clear(); // Delete all
+
+    // Calculate total score
+    auto now = std::chrono::steady_clock::now();
+    elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+    int totalScore = score + (elapsedTime/2);
+
+    // Print game over message and score and possibilities
+    mvprintw(LINES / 2 - 2, COLS / 2 - 10, "Game Over");
+    mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
+    mvprintw(LINES / 2 + 2, COLS / 2 - 10, "Press 'q' to quit");
+    mvprintw(LINES / 2 + 4, COLS / 2 - 10, "Press 'c' to play again");
+
+    refresh();
+    int ch;
+    while ((ch = getch()) != 'q' && ch!='c') {
+        // Wait for the input
+         }
+         if (ch == 'c') {
+        // Rinizializza e inizia una nuova partita
+        init();
+        state = GameState::Playing;
+        start(); // Avvia il gioco
+         } else if (ch == 'q') {
+        endwin(); // Chiudi la finestra ncurses
+        exit(0); // Esci dal programma
+           }
+}
+
 void Game::start() {
-    while (!gameOver) {
+    while (state != GameState::GameOver) {
         draw();
         input();
         logic();
     }
+   showGameOverScreen();
    // endwin();
 }
 
@@ -145,9 +178,6 @@ void Game::input() {
                 if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
             }
             break;
-        case 'q':
-            gameOver = true;
-            break;
         case ' ':
             rotateTetromino();
             break;
@@ -169,20 +199,33 @@ void Game::input() {
 void Game::logic() {
     if (!checkCollision(currentX, currentY + 1, currentTetromino)) {
         currentY++;
-    } else {
+    } else
+            {
         mergeTetromino();
+
         currentType = TetrominoType(rand() % NumTetrominoTypes);
+
         currentRotation = 0;
+
         for (int i = 0; i < 4; ++i) {
+
             for (int j = 0; j < 4; ++j) {
+
                 currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
             }
+
         }
+
         currentX = WIDTH / 2 - 2;
         currentY = 0;
-        if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
+
+        if (checkCollision(currentX, currentY, currentTetromino)) {
+            state = GameState::GameOver;
+        }
+
     }
     clearLines();
+
 }
 
 bool Game::checkCollision(int x, int y, const int shape[4][4]) {
