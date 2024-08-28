@@ -48,33 +48,40 @@ void Game::init() {
 }
 
 void Game::showGameOverScreen() {
-    clear(); // Delete all
+    clear(); // Pulisce la schermata
 
-    // Calculate total score
+    // Calcola il punteggio totale
     auto now = std::chrono::steady_clock::now();
     elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
-    int totalScore = score + (elapsedTime/2);
+    int totalScore = score + (elapsedTime / 2);
 
-    // Print game over message and score and possibilities
+    // Mostra il messaggio di game over, il punteggio, e le possibilità
     mvprintw(LINES / 2 - 2, COLS / 2 - 10, "Game Over");
     mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
     mvprintw(LINES / 2 + 2, COLS / 2 - 10, "Press 'q' to quit");
     mvprintw(LINES / 2 + 4, COLS / 2 - 10, "Press 'c' to play again");
+    mvprintw(LINES / 2 + 6, COLS / 2 - 10, "Press 'm' to return to main menu");
 
     refresh();
     int ch;
-    while ((ch = getch()) != 'q' && ch!='c') {
-        // Wait for the input
-         }
-         if (ch == 'c') {
+    while ((ch = getch()) != 'q' && ch != 'c' && ch != 'm') {
+        // Aspetta input
+    }
+
+    if (ch == 'c') {
         // Rinizializza e inizia una nuova partita
         init();
         state = GameState::Playing;
         start(); // Avvia il gioco
-         } else if (ch == 'q') {
-        endwin(); // Chiudi la finestra ncurses
-        exit(0); // Esci dal programma
-           }
+    } else if (ch == 'm') {
+        // Torna al menu principale
+        state = GameState::GameOver; // Per uscire dal loop del gioco
+        clear();
+        showGameMenu();
+    } else if (ch == 'q') {
+        endwin(); // Chiude la finestra ncurses
+        exit(0); // Esce dal programma
+    }
 }
 
 void Game::showGameMenu() {
@@ -122,6 +129,8 @@ void Game::showGameMenu() {
                 if (scelta == 0) {
                     clear();
                     endwin(); // Ripristina il terminale prima di cambiare
+                    state = GameState::Playing;
+                    init();
                     start(); // Avvia il gioco
                     return;
                 } /*else if (scelta == 1) {
