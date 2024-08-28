@@ -160,6 +160,7 @@ class Game {
 public:
     Game();
     void start();
+    void showGameMenu();
 
 private:
     void init();

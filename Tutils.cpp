@@ -77,6 +77,66 @@ void Game::showGameOverScreen() {
            }
 }
 
+void Game::showGameMenu() {
+
+    initscr();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+
+    int scelta = 0; // Variabile per la scelta dell'utente
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+
+    while (true) {
+        werase(stdscr); // Cancella la finestra principale senza aggiornarla subito
+
+                                     // Calcola la posizione centrale
+        int start_y = max_y / 2 - 2; // Riga di partenza per il testo
+        int start_x = (max_x - 20) / 2; // Colonna di partenza per il testo, considerando la lunghezza massima dell'opzione
+
+                                                              // Mostra il menu
+        mvprintw(start_y, start_x, "Benvenuto nel Tetris!");
+        mvprintw(start_y + 2, start_x, "Nuova Partita");
+        mvprintw(start_y + 3, start_x, "Classifica");
+        mvprintw(start_y + 4, start_x, "Esci");
+
+                                                             // Evidenzia la scelta corrente con una freccia
+        if (scelta == 0) mvprintw(start_y + 2, start_x - 2, ">");
+        else if (scelta == 1) mvprintw(start_y + 3, start_x - 2, ">");
+        else if (scelta == 2) mvprintw(start_y + 4, start_x - 2, ">");
+
+        wnoutrefresh(stdscr);                               // Aggiorna la finestra virtuale senza aggiornarla sullo schermo
+        doupdate();                                         // Aggiorna effettivamente lo schermo con le modifiche fatte
+
+        int ch = getch();
+
+        switch (ch) {
+            case KEY_UP:
+                scelta = (scelta - 1 + 3) % 3; // Muovi verso l'alto (3 opzioni)
+                break;
+            case KEY_DOWN:
+                scelta = (scelta + 1) % 3; // Muovi verso il basso (3 opzioni)
+                break;
+            case '\n': // Invio
+                if (scelta == 0) {
+                    clear();
+                    endwin(); // Ripristina il terminale prima di cambiare
+                    start(); // Avvia il gioco
+                    return;
+                } /*else if (scelta == 1) {
+                    endwin(); // Ripristina il terminale prima di mostrare la classifica
+                    showLeaderboard(); // Mostra la classifica
+                    return;
+                }*/ else if (scelta == 2) {
+                    endwin(); // Ripristina il terminale prima di uscire
+                    exit(0);
+                }
+                break;
+        }
+    }
+}
+
 void Game::start() {
     while (state != GameState::GameOver) {
         draw();
