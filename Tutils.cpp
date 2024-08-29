@@ -159,46 +159,51 @@ void Game::start() {
 }
 
 void Game::draw() {
-    // Create an off-screen window
-    WINDOW *offscreen = newwin(HEIGHT, WIDTH * 2 + 20, 0, 0);
+    // Create an off-screen window for the play area with border
+    WINDOW *playArea = newwin(HEIGHT + 2, WIDTH * 2 + 2, 0, 0);  // Adjusted window size for the play area with border
 
-    // Draw the board to the off-screen window
+    // Draw the border around the play area
+    box(playArea, 0, 0);  // Draws a border around the play area
+
+    // Draw the board to the play area window
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
             if (board[y][x]) {
-                wattron(offscreen, COLOR_PAIR(board[y][x]));
-                mvwprintw(offscreen, y, x * 2, "[]"); // x*2 makes "[]" more "square"
-                wattroff(offscreen, COLOR_PAIR(board[y][x]));
+                wattron(playArea, COLOR_PAIR(board[y][x]));
+                mvwprintw(playArea, y + 1, x * 2 + 1, "[]");  // Adjust position for the border
+                wattroff(playArea, COLOR_PAIR(board[y][x]));
             }
         }
     }
 
-    // Draw the current tetromino to the off-screen window
+    // Draw the current tetromino to the play area window
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             if (currentTetromino[y][x]) {
-                wattron(offscreen, COLOR_PAIR(currentType + 1));
-                mvwprintw(offscreen, currentY + y, (currentX + x) * 2, "[]");
-                wattroff(offscreen, COLOR_PAIR(currentType + 1));
+                wattron(playArea, COLOR_PAIR(currentType + 1));
+                mvwprintw(playArea, currentY + y + 1, (currentX + x) * 2 + 1, "[]");  // Adjust position for the border
+                wattroff(playArea, COLOR_PAIR(currentType + 1));
             }
         }
     }
 
-    // Draw the score to the off-screen window
-    mvwprintw(offscreen, 0, WIDTH * 2 + 2, "Score: %d", score);
+    // Refresh the play area window to display the content and border
+    wrefresh(playArea);
 
-    // Track elapsed time
+    // Free the play area window
+    delwin(playArea);
+
+    // Display the score and time in the main screen (stdscr)
+    mvprintw(0, WIDTH * 2 + 4, "Score: %d", score);
+
+    // Track and display elapsed time
     auto now = std::chrono::steady_clock::now();
     elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
-    mvwprintw(offscreen, 2, WIDTH * 2 + 2, "Time: %d", elapsedTime);
+    mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
 
-    // Copy the off-screen window to the main screen
-    overwrite(offscreen, stdscr);
-    refresh();
-
-    // Free the off-screen window
-    delwin(offscreen);
+    refresh();  // Refresh the main screen to show the score and time
 }
+
 
 /*void Game::draw() {
     clear();
