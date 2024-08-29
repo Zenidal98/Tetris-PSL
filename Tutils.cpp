@@ -57,6 +57,8 @@ void Game::showGameOverScreen() {
     elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
     int totalScore = score + (elapsedTime / 2);
 
+    saveScore(totalScore);
+
     // Mostra il messaggio di game over, il punteggio, e le possibilità
     mvprintw(LINES / 2 - 2, COLS / 2 - 10, "Game Over");
     mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
@@ -135,11 +137,11 @@ void Game::showGameMenu() {
                     init();
                     start(); // Avvia il gioco
                     return;
-                } /*else if (scelta == 1) {
+                }   else if (scelta == 1) {
                     endwin(); // Ripristina il terminale prima di mostrare la classifica
                     showLeaderboard(); // Mostra la classifica
                     return;
-                }*/ else if (scelta == 2) {
+                }   else if (scelta == 2) {
                     endwin(); // Ripristina il terminale prima di uscire
                     exit(0);
                 }
@@ -147,6 +149,55 @@ void Game::showGameMenu() {
         }
     }
 }
+
+void Game::showLeaderboard() {
+    clear();
+    std::ifstream file("leaderboard.txt");
+    std::vector<int> scores;
+
+    if (file.is_open()) {
+        std::string line;
+        while (std::getline(file, line)) {
+            // Assicurati che la linea non sia vuota e che possa essere convertita in un intero
+            if (!line.empty() && std::all_of(line.begin(), line.end(), ::isdigit)) {
+                int score = std::stoi(line);
+                scores.push_back(score);
+            }
+        }
+        file.close();
+    }
+
+    // Ordina i punteggi in ordine decrescente
+    std::sort(scores.begin(), scores.end(), std::greater<int>());
+
+    // Stampa la classifica
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    mvprintw(0, 0, "Premi 'q' per tornare al menu principale");
+
+    int start_y = max_y / 2 - (scores.size() / 2); // Centro verticale della classifica
+    for (size_t i = 0; i < scores.size(); ++i) {
+        mvprintw(start_y + i, max_x / 2 - 10, "%d", scores[i]);
+    }
+    refresh();
+
+    int ch;
+    while ((ch = getch()) != 'q') {
+        // Attende che l'utente prema 'q'
+    }
+    showGameMenu();
+}
+
+
+                                        //funzione per la classifica
+void Game::saveScore(int score) {
+    std::ofstream file("leaderboard.txt", std::ios::app); // Apri in modalità append
+    if (file.is_open()) {
+        file << score << std::endl;
+        file.close();
+    }
+}
+
 
 void Game::start() {
     while (state != GameState::GameOver) {

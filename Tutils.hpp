@@ -3,6 +3,9 @@
 
 #include <ncurses.h>
 #include <chrono>
+#include <fstream>
+#include <vector>
+#include <algorithm>
 
 // Dimensions of the game board
 const int WIDTH = 10;
@@ -161,6 +164,7 @@ public:
     Game();
     void start();
     void showGameMenu();
+    void showLeaderboard();
 
 private:
     void init();
@@ -172,6 +176,7 @@ private:
     void mergeTetromino();
     void clearLines();
     void showGameOverScreen();
+    void saveScore(int score);  // per la classifica private
 
     int score;
     bool gameOver;
