@@ -118,7 +118,7 @@ const int TETROMINO_ROTATIONS[7][4][4][4] = {
             {0, 0, 0}
         }, {
             {0, 1, 0},
-            {1, 1, 0},
+            {0, 1, 1},
             {0, 1, 0}
         }, {
             {0, 0, 0},
@@ -126,7 +126,7 @@ const int TETROMINO_ROTATIONS[7][4][4][4] = {
             {0, 1, 0}
         }, {
             {0, 1, 0},
-            {0, 1, 1},
+            {1, 1, 0},
             {0, 1, 0}
         }
     },
@@ -182,6 +182,8 @@ private:
     int currentRotation;
 
     std::chrono::steady_clock::time_point startTime;
+    std::chrono::time_point<std::chrono::steady_clock> pauseStartTime;
+    std::chrono::time_point<std::chrono::steady_clock> lastFallTime;  //per non far scendere i blocchi più veloci dopo la pausa
     int elapsedTime;
 
     bool paused = false;

@@ -2,9 +2,10 @@
 #include <cstdlib>
 #include <ctime>
 
-Game::Game() : startTime(std::chrono::steady_clock::now()), elapsedTime(0), state(GameState::Playing) {
+Game::Game() : startTime(std::chrono::steady_clock::now()), lastFallTime(std::chrono::steady_clock::now()), elapsedTime(0), paused(false), state(GameState::Playing) {
     init();
 }
+
 
 void Game::init() {
     clear(); // need in case of previous gameover and previous match
@@ -45,6 +46,7 @@ void Game::init() {
     currentY = 0;
 
     startTime = std::chrono::steady_clock::now(); //important so the time is resetted every match
+    lastFallTime = std::chrono::steady_clock::now();
 }
 
 void Game::showGameOverScreen() {
@@ -228,29 +230,32 @@ void Game::input() {
     int ch = getch();
     switch (ch) {
         case KEY_LEFT:
-            if (!checkCollision(currentX - 1, currentY, currentTetromino)) currentX--;
+            if (!paused && !checkCollision(currentX - 1, currentY, currentTetromino)) currentX--;
             break;
         case KEY_RIGHT:
-            if (!checkCollision(currentX + 1, currentY, currentTetromino)) currentX++;
+            if (!paused && !checkCollision(currentX + 1, currentY, currentTetromino)) currentX++;
             break;
         case KEY_DOWN:
-            if (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
-            else {
-                mergeTetromino();
-                currentType = TetrominoType(rand() % NumTetrominoTypes);
-                currentRotation = 0;
-                for (int i = 0; i < 4; ++i) {
-                    for (int j = 0; j < 4; ++j) {
-                        currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+            if(!paused){
+                if (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
+                else {
+                    mergeTetromino();
+                    currentType = TetrominoType(rand() % NumTetrominoTypes);
+                    currentRotation = 0;
+                    for (int i = 0; i < 4; ++i) {
+                        for (int j = 0; j < 4; ++j) {
+                            currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+                        }
                     }
+                    currentX = WIDTH / 2 - 2;
+                    currentY = 0;
+                    if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
                 }
-                currentX = WIDTH / 2 - 2;
-                currentY = 0;
-                if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
             }
             break;
         case ' ':
-            rotateTetromino();
+            if(!paused)
+                rotateTetromino();
             break;
         case 'r':
             Game::init();
@@ -259,41 +264,64 @@ void Game::input() {
         case 'p':
             paused = !paused;
             if(paused){
+                pauseStartTime = std::chrono::steady_clock::now();
                 nodelay(stdscr, FALSE);
+                mvprintw(3, WIDTH * 2 + 2, "Paused");
+                refresh();
             }
-            else
+            else{
+                auto pauseEndTime = std::chrono::steady_clock::now();
+                startTime += pauseEndTime - pauseStartTime;
+                lastFallTime += pauseEndTime - pauseStartTime; // Adjust lastFallTime to maintain consistency
                 nodelay(stdscr, TRUE);
+                mvprintw(3, WIDTH * 2 + 2, "      ");
+                refresh();
+            }
+            break;
     }
     napms(100);
 }
 
 void Game::logic() {
-    if (!checkCollision(currentX, currentY + 1, currentTetromino)) {
-        currentY++;
-    } else
-            {
-        mergeTetromino();
+    if(paused)
+        return;
 
-        currentType = TetrominoType(rand() % NumTetrominoTypes);
+    // Control block fall speed
+    auto now = std::chrono::steady_clock::now();
+    auto elapsedSinceLastFall = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFallTime).count();
 
-        currentRotation = 0;
+    // Adjust the fall interval as needed
+    const int fallInterval = 150; // Milliseconds between each block fall
 
-        for (int i = 0; i < 4; ++i) {
+    if (elapsedSinceLastFall > fallInterval) {
+        if (!checkCollision(currentX, currentY + 1, currentTetromino)) {
+            currentY++;
+        } else
+                {
+            mergeTetromino();
 
-            for (int j = 0; j < 4; ++j) {
+            currentType = TetrominoType(rand() % NumTetrominoTypes);
 
-                currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+            currentRotation = 0;
+
+            for (int i = 0; i < 4; ++i) {
+
+                for (int j = 0; j < 4; ++j) {
+
+                    currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+                }
+
+            }
+
+            currentX = WIDTH / 2 - 2;
+            currentY = 0;
+
+            if (checkCollision(currentX, currentY, currentTetromino)) {
+                state = GameState::GameOver;
             }
 
         }
-
-        currentX = WIDTH / 2 - 2;
-        currentY = 0;
-
-        if (checkCollision(currentX, currentY, currentTetromino)) {
-            state = GameState::GameOver;
-        }
-
+        lastFallTime = now;     //update lastFallTime
     }
     clearLines();
 
