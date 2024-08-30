@@ -253,7 +253,8 @@ void Game::draw() {
     mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
 
     // Mostra comandi
-    mvprintw(4, WIDTH * 2 + 4, "Spazio per ruotare");
+    mvprintw(4, WIDTH * 2 + 4, "Comandi:");
+    mvprintw(5, WIDTH * 2 + 4, "Spazio per ruotare");
     mvprintw(6, WIDTH * 2 + 4, "P per pausa");
 
     refresh();  // Refresh the main screen to show the score and time
@@ -295,6 +296,7 @@ void Game::input() {
         case KEY_RIGHT:
             if (!paused && !checkCollision(currentX + 1, currentY, currentTetromino)) currentX++;
             break;
+        /*
         case KEY_DOWN:
             if(!paused){
                 if (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
@@ -313,6 +315,7 @@ void Game::input() {
                 }
             }
             break;
+        */
         case ' ':
             if(!paused)
                 rotateTetromino();
@@ -326,7 +329,7 @@ void Game::input() {
             if(paused){
                 pauseStartTime = std::chrono::steady_clock::now();
                 nodelay(stdscr, FALSE);
-                mvprintw(3, WIDTH * 2 + 2, "Paused");
+                mvprintw(8, WIDTH * 2 + 4, "Pausa, riprendi con P");
                 refresh();
             }
             else{
@@ -334,7 +337,7 @@ void Game::input() {
                 startTime += pauseEndTime - pauseStartTime;
                 lastFallTime += pauseEndTime - pauseStartTime; // Adjust lastFallTime to maintain consistency
                 nodelay(stdscr, TRUE);
-                mvprintw(3, WIDTH * 2 + 2, "      ");
+                mvprintw(8, WIDTH * 2 + 4, "                       ");
                 refresh();
             }
             break;
@@ -437,6 +440,7 @@ void Game::mergeTetromino() {
 }
 
 void Game::clearLines() {
+    int counter = 0;
     for (int y = HEIGHT - 1; y >= 0; y--) {
         bool fullLine = true;
         for (int x = 0; x < WIDTH; x++) {
@@ -451,8 +455,10 @@ void Game::clearLines() {
                     board[i][x] = board[i - 1][x];
                 }
             }
-            score += 100;
+            counter++;
             y++;
         }
     }
+    if(counter > 0)
+        score += 100 * counter + 50 * (counter-1);
 }
