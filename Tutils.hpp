@@ -188,7 +188,7 @@ private:
 
     // per aumentare la velocità
     int n = 1;
-    int difficulty = 100;
+    int difficulty = 150;
 
     std::chrono::steady_clock::time_point startTime;
     std::chrono::time_point<std::chrono::steady_clock> pauseStartTime;

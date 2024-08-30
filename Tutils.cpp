@@ -252,6 +252,10 @@ void Game::draw() {
     elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
     mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
 
+    // Mostra comandi
+    mvprintw(4, WIDTH * 2 + 4, "Spazio per ruotare");
+    mvprintw(6, WIDTH * 2 + 4, "P per pausa");
+
     refresh();  // Refresh the main screen to show the score and time
 }
 
@@ -337,7 +341,7 @@ void Game::input() {
     }
 
     if(score > 200*n && difficulty >=50){
-        difficulty = difficulty - 10;
+        difficulty = difficulty - 20;
         n++;
     }
     napms(difficulty);
