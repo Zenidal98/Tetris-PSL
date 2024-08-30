@@ -335,7 +335,12 @@ void Game::input() {
             }
             break;
     }
-    napms(100);
+
+    if(score > 200*n && difficulty >=50){
+        difficulty = difficulty - 10;
+        n++;
+    }
+    napms(difficulty);
 }
 
 void Game::logic() {
@@ -347,7 +352,7 @@ void Game::logic() {
     auto elapsedSinceLastFall = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFallTime).count();
 
     // Adjust the fall interval as needed
-    const int fallInterval = 150; // Milliseconds between each block fall
+    int fallInterval = difficulty; // Milliseconds between each block fall
 
     if (elapsedSinceLastFall > fallInterval) {
         if (!checkCollision(currentX, currentY + 1, currentTetromino)) {

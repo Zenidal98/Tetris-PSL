@@ -186,6 +186,10 @@ private:
     int currentTetromino[4][4];
     int currentRotation;
 
+    // per aumentare la velocità
+    int n = 1;
+    int difficulty = 100;
+
     std::chrono::steady_clock::time_point startTime;
     std::chrono::time_point<std::chrono::steady_clock> pauseStartTime;
     std::chrono::time_point<std::chrono::steady_clock> lastFallTime;  //per non far scendere i blocchi più veloci dopo la pausa
