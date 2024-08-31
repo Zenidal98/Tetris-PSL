@@ -91,6 +91,6 @@ void Menu::showGameOverScreen(int totalScore) {
     }
 }
 
-void Menu::displayScore(int totalScore) const {
+void Menu::displayScore(int totalScore) {
     mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
 }

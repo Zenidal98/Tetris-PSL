@@ -9,7 +9,7 @@ public:
     void showGameOverScreen(int totalScore);
 
 private:
-    void displayScore(int totalScore) const;
+    void displayScore(int totalScore);
 };
 
 #endif // MENU_HPP

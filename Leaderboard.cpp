@@ -1,30 +1,49 @@
 #include "Leaderboard.hpp"
+#include "Menu.hpp"
+#include <ncurses.h>
 #include <fstream>
-#include <iostream>
+#include <vector>
+#include <string>
 #include <algorithm>
 
 void Leaderboard::loadScores() {
-    std::ifstream file("leaderboard.txt");
-    if (file.is_open()) {
-        int score;
-        while (file >> score) {
-            scores.push_back(score);
-        }
-        file.close();
+    std::ifstream infile("scores.txt");
+    int score;
+    scores.clear();
+    while (infile >> score) {
+        scores.push_back(score);
     }
-    std::sort(scores.begin(), scores.end(), std::greater<int>());
+    std::sort(scores.rbegin(), scores.rend());
 }
 
 void Leaderboard::saveScore(int score) {
-    std::ofstream file("leaderboard.txt", std::ios::app);
-    if (file.is_open()) {
-        file << score << std::endl;
-        file.close();
-    }
+    std::ofstream outfile("scores.txt", std::ios::app);
+    outfile << score << std::endl;
 }
 
-void Leaderboard::showLeaderboard() const {
-    for (const int score : scores) {
-        std::cout << score << std::endl;
+void Leaderboard::showLeaderboard() {
+    clear();  // Clear the screen for the leaderboard
+
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+
+    mvprintw(1, max_x / 2 - 6, "Leaderboard");
+
+    int start_y = 3;
+    for (size_t i = 0; i < scores.size() && i < 10; ++i) {
+        mvprintw(start_y + i, max_x / 2 - 10, "%zu. %d", i + 1, scores[i]);
     }
+
+    mvprintw(start_y + 12, max_x / 2 - 10, "Press 'm' to return to main menu");
+
+    refresh();
+
+    int ch;
+    while ((ch = getch()) != 'm') {
+        // Aspetta che l'utente prema 'm'
+    }
+
+    // Torna al menu principale
+    Menu menu;
+    menu.showMainMenu();
 }

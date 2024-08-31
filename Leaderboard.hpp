@@ -7,8 +7,8 @@ class Leaderboard {
 public:
     void loadScores();
     void saveScore(int score);
-    void showLeaderboard() const;
-    
+    void showLeaderboard();
+
 private:
     std::vector<int> scores;
 };
