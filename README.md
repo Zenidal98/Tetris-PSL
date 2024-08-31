@@ -14,8 +14,5 @@ La classifica elenca tutti i punteggi delle partite fatte, elencate in ordine de
 A fine partita viene elencato il punteggio fatto e si ha la possibilità di tornare al menù principale, di uscire o di fare un'altra partita.
 
 # Librerie
-Le librerie utilizzate sono quelle elencate nelle richieste o viste a lezione, quindi:
--curses.h
--fstream
--chrono
--
+Le librerie utilizzate sono quelle elencate nelle richieste o viste a lezione, quindi curses.h, fstream, chrono,
+
