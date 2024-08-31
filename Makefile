@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -Wall -g
 LDFLAGS = -lncurses
 
-SRCS = Game.cpp Tetromino.cpp Board.cpp UserInterface.cpp main.cpp
+SRCS = Game.cpp Tetromino.cpp Leaderboard.cpp Menu.cpp main.cpp
 OBJS = $(SRCS:.cpp=.o)
 EXEC = tetris
 
