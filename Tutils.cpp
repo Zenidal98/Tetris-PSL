@@ -248,14 +248,16 @@ void Game::draw() {
     mvprintw(0, WIDTH * 2 + 4, "Score: %d", score);
 
     // Track and display elapsed time
-    auto now = std::chrono::steady_clock::now();
-    elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
-    mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
-
+    if(!paused){
+        auto now = std::chrono::steady_clock::now();
+        elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+        mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
+    }
     // Mostra comandi
     mvprintw(4, WIDTH * 2 + 4, "Comandi:");
     mvprintw(5, WIDTH * 2 + 4, "Spazio per ruotare");
     mvprintw(6, WIDTH * 2 + 4, "P per pausa");
+    mvprintw(7, WIDTH * 2 + 4, "Freccia giù per piazzare subito il blocco");
 
     refresh();  // Refresh the main screen to show the score and time
 }
@@ -325,7 +327,7 @@ void Game::input() {
             if(paused){
                 pauseStartTime = std::chrono::steady_clock::now();
                 nodelay(stdscr, FALSE);
-                mvprintw(8, WIDTH * 2 + 4, "Pausa, riprendi con P");
+                mvprintw(14, WIDTH * 2 + 4, "Pausa, riprendi con P");
                 refresh();
             }
             else{
@@ -333,7 +335,7 @@ void Game::input() {
                 startTime += pauseEndTime - pauseStartTime;
                 lastFallTime += pauseEndTime - pauseStartTime; // Adjust lastFallTime to maintain consistency
                 nodelay(stdscr, TRUE);
-                mvprintw(8, WIDTH * 2 + 4, "                       ");
+                mvprintw(14, WIDTH * 2 + 4, "                       ");
                 refresh();
             }
             break;
