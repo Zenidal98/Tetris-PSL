@@ -60,20 +60,17 @@ void Menu::showMainMenu() {
     }
 }
 
-void Menu::showGameOverScreen() {
+void Menu::showGameOverScreen(int totalScore) {
     clear();
-
-    auto now = std::chrono::steady_clock::now();
-    int totalScore = /* Compute total score */;
 
     Leaderboard leaderboard;
     leaderboard.saveScore(totalScore);
 
     mvprintw(LINES / 2 - 2, COLS / 2 - 10, "Game Over");
-    mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
-    mvprintw(LINES / 2 + 2, COLS / 2 - 10, "Press 'q' to quit");
-    mvprintw(LINES / 2 + 4, COLS / 2 - 10, "Press 'c' to play again");
-    mvprintw(LINES / 2 + 6, COLS / 2 - 10, "Press 'm' to return to main menu");
+    displayScore(totalScore);
+    mvprintw(LINES / 2 + 4, COLS / 2 - 10, "Press 'q' to quit");
+    mvprintw(LINES / 2 + 6, COLS / 2 - 10, "Press 'c' to play again");
+    mvprintw(LINES / 2 + 8, COLS / 2 - 10, "Press 'm' to return to main menu");
 
     refresh();
     int ch;
@@ -82,12 +79,18 @@ void Menu::showGameOverScreen() {
     }
 
     if (ch == 'c') {
+        endwin();
         Game game;
         game.start();
     } else if (ch == 'm') {
+        endwin();
         showMainMenu();
     } else if (ch == 'q') {
         endwin();
         exit(0);
     }
+}
+
+void Menu::displayScore(int totalScore) const {
+    mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
 }

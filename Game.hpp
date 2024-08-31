@@ -4,6 +4,10 @@
 #include "Tetromino.hpp"
 #include "Leaderboard.hpp"
 #include "Menu.hpp"
+#include <chrono>
+
+const int WIDTH = 10;
+const int HEIGHT = 20;
 
 class Game {
 public:

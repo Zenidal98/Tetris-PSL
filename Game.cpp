@@ -41,8 +41,9 @@ void Game::start() {
     }
 
     endwin();
-    menu.showGameOverScreen();
+    menu.showGameOverScreen(score);
 }
+
 
 void Game::draw() {
     clear();
