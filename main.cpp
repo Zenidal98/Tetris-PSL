@@ -1,8 +1,7 @@
-#include "Tutils.hpp"
+#include "Menu.hpp"
 
 int main() {
-    Game game;
-    game.showGameMenu();
-    endwin();
+    Menu menu;
+    menu.showMainMenu();
     return 0;
 }
