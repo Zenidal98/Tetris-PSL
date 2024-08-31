@@ -296,26 +296,22 @@ void Game::input() {
         case KEY_RIGHT:
             if (!paused && !checkCollision(currentX + 1, currentY, currentTetromino)) currentX++;
             break;
-        /*
         case KEY_DOWN:
             if(!paused){
-                if (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
-                else {
-                    mergeTetromino();
-                    currentType = TetrominoType(rand() % NumTetrominoTypes);
-                    currentRotation = 0;
-                    for (int i = 0; i < 4; ++i) {
-                        for (int j = 0; j < 4; ++j) {
-                            currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
-                        }
+                while (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
+                mergeTetromino();
+                currentType = TetrominoType(rand() % NumTetrominoTypes);
+                currentRotation = 0;
+                for (int i = 0; i < 4; ++i) {
+                    for (int j = 0; j < 4; ++j) {
+                        currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
                     }
-                    currentX = WIDTH / 2 - 2;
-                    currentY = 0;
-                    if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
                 }
+                currentX = WIDTH / 2 - 2;
+                currentY = 0;
+                if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
             }
             break;
-        */
         case ' ':
             if(!paused)
                 rotateTetromino();
