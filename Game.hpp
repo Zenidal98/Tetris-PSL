@@ -1,50 +1,46 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "Board.hpp"
-#include "UserInterface.hpp"
-#include <chrono>
-
-enum class GameState {
-    Playing,
-    Paused,
-    GameOver
-};
+#include "Tetromino.hpp"
+#include "Leaderboard.hpp"
+#include "Menu.hpp"
 
 class Game {
 public:
     Game();
     void start();
-    
+
 private:
     void init();
+    void draw();
     void input();
     void logic();
     bool checkCollision(int x, int y, const int shape[4][4]);
     void rotateTetromino();
     void mergeTetromino();
-    void showGameOverScreen();
+    void clearLines();
 
-    Board board;
-    UserInterface userInterface;
-    
-    GameState state;
+    Tetromino currentTetromino;
     int score;
     bool gameOver;
-    bool paused;
-    int currentType;
+    int currentX, currentY;
+    int board[HEIGHT][WIDTH];
     int currentRotation;
-    int currentTetromino[4][4];
-    int currentX;
-    int currentY;
-    
     int difficulty;
-    int n;
     std::chrono::steady_clock::time_point startTime;
-    std::chrono::steady_clock::time_point lastFallTime;
     std::chrono::steady_clock::time_point pauseStartTime;
+    std::chrono::steady_clock::time_point lastFallTime;
     int elapsedTime;
+    bool paused;
+    Menu menu;
+    Leaderboard leaderboard;
+
+    enum class GameState {
+        Playing,
+        GameOver
+    };
+
+    GameState state;
 };
 
 #endif // GAME_HPP
-
