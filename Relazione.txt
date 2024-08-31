@@ -1,0 +1,21 @@
+TETROMINO_ROTATIONS: i tetramini sono rappresentati come array bidimensionali di interi, in modo che 1 e 0 rappresentino rispettivamente la presenza o meno di un blocco in una certa posizione. Ogni tetramino è una matrice 4x4 affinché tutte le forme occupino la stessa quantità di spazio. Per ogni forma (sette in totale) sono salvati i quattro possibili stati di rotazione. Il motivo per cui si è scelto di rappresentare i tetramini in tale modo e non avere istanze di una classe Tetromino é dovuto a motivi di perfomance e facilità nella gestione della memoria.
+[16:09]
+Init: inizializza la schermata e le variabili necessarie al corretto utilizzo di ncurses (colori inclusi), del cronometro e l'istanziazione del primo tetramino in cima
+[16:10]
+start: il vero e proprio "gameloop" del progetto, dirige la generazione di ogni nuovo frame e controlla l'eventuale caso di GameOver. Maggiori informazioni nella descrizione delle sottofunzioni chiamate.
+[16:12]
+draw: disegna la board di gioco ed il tetramino corrente con i colori associati, da completare con le nuove feature
+
+Leo — Oggi alle 16:13
+input: una volta per frame, é possibile un'azione di movimento (destra, sinistra, o giù), una rotazione (90 gradi in senso orario), o funzioni di QoL come mettere in pausa o resettare il gioco
+[16:16]
+logic: gestisce in caso di avvenuta collisione, la merge del tetramino alla board, la cancellazione delle righe o il gameover. Se il gioco non deve concludersi, prepara un nuovo tetramino in cima alla board per continuare la partita
+[16:18]
+CheckCollisions: controlla che il tetramino corrente non si sovrapponga alla board e che non esca dai limiti laterali
+[16:19]
+rotateTetromino: sostituisce il tetramino con lo stato di rotazione successivo (90 gradi in senso orario) a patto che questo nuovo stato non causi una collisione.
+
+Leo — Oggi alle 16:21
+mergeTetromino: quando il tetramino raggiunge il fondo, viene aggiunto in maniera definitiva alla board.
+[16:24]
+clearLines: controlla e gestisce il caso in cui una riga o più (max 4) vengano completate con l'inserimento di un tetramino. In caso affermativo, gestisce la cancellazione delle suddette righe e attribuisce il punteggio (più bonus per righe multiple simultanee).
