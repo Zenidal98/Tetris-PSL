@@ -15,6 +15,7 @@ public:
     void showGameOverScreen();
     void showGameMenu();
     void showLeaderboard();
+    void saveScore(int score);  // per la classifica private
 
 private:
     Game* game;
