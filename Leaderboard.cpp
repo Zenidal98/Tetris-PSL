@@ -29,7 +29,7 @@ void Leaderboard::showLeaderboard() {
 
     mvprintw(1, max_x / 2 - 6, "Leaderboard");
 
-    int start_y = 3;
+    int start_y = max_y / 2 - (scores.size() / 2); // Centro verticale della classifica
     for (size_t i = 0; i < scores.size() && i < 10; ++i) {
         mvprintw(start_y + i, max_x / 2 - 10, "%zu. %d", i + 1, scores[i]);
     }
@@ -47,3 +47,4 @@ void Leaderboard::showLeaderboard() {
     Menu menu;
     menu.showMainMenu();
 }
+
