@@ -163,8 +163,6 @@ class Game {
 public:
     Game();
     void start();
-    void showGameMenu();
-    void showLeaderboard();
 
 private:
     void init();
@@ -175,8 +173,6 @@ private:
     void rotateTetromino();
     void mergeTetromino();
     void clearLines();
-    void showGameOverScreen();
-    void saveScore(int score);  // per la classifica private
 
     int score;
     bool gameOver;
