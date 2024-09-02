@@ -95,5 +95,5 @@ void Menu::showGameOverScreen(int totalScore, int time) {
 }
 
 void Menu::displayScore(int totalScore) {
-    mvprintw(LINES / 2, COLS / 2 - 10, "Score: %d", totalScore);
+    mvprintw(LINES / 2, COLS / 2 - 10, "Punteggio: %d", totalScore);
 }
