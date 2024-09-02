@@ -43,6 +43,7 @@ void Menu::showMainMenu() {
                 break;
             case '\n':
                 if (choice == 0) {
+                    clear();
                     endwin();
                     Game game;
                     game.start();
