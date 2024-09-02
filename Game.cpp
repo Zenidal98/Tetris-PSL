@@ -1,5 +1,4 @@
 #include "Game.hpp"
-#include "Tetromino.hpp"
 #include <ncurses.h>
 #include <cstdlib>
 #include <ctime>
