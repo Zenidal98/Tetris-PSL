@@ -58,7 +58,8 @@ void Game::start() {
         input();
         logic();
     }
-   showGameOverScreen();
+  Menu menu;
+  menu.showGameOverScreen();
    // endwin();
 }
 void Game::saveScore(int score) {
