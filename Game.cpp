@@ -229,56 +229,6 @@ void Game::logic() {
 }
 
 bool Game::checkCollision(int x, int y, const int shape[4][4]) {
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            if (shape[i][j] && (x + j < 0 || x + j >= WIDTH || y + i >= HEIGHT || board[y + i][x + j])) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-void Game::rotateTetromino() {
-    int oldRotation = currentTetromino.getRotation();
-    currentTetromino.setRotation((currentTetromino.getRotation() + 1) % 4);
-    if (checkCollision(currentX, currentY, *currentTetromino.getShape())) {
-        currentTetromino.setRotation(oldRotation);
-    }
-}
-
-void Game::mergeTetromino() {
-    auto shape = currentTetromino.getShape();
-    for (int y = 0; y < 4; ++y) {
-        for (int x = 0; x < 4; ++x) {
-            if ((*shape)[y][x]) {
-                board[currentY + y][currentX + x] = 1;
-            }
-        }
-    }
-}
-
-void Game::clearLines() {
-    for (int y = HEIGHT - 1; y >= 0; --y) {
-        bool lineFull = true;
-        for (int x = 0; x < WIDTH; ++x) {
-            if (!board[y][x]) {
-                lineFull = false;
-                break;
-            }
-        }
-        if (lineFull) {
-            for (int k = y; k > 0; --k) {
-                std::copy(board[k - 1], board[k - 1] + WIDTH, board[k]);
-            }
-            std::fill(board[0], board[0] + WIDTH, 0);
-            ++score;
-            ++y;
-        }
-    }
-}
-
-bool Game::checkCollision(int x, int y, const int shape[4][4]) {
     // Iterate over the shape of the tetromino
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
