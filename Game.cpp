@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "Menu.hpp"
 #include <ncurses.h>
 #include <cstdlib>
 #include <ctime>
@@ -59,7 +60,7 @@ void Game::start() {
         logic();
     }
   Menu menu;
-  menu.showGameOverScreen();
+  menu.showGameOverScreen(score);
    // endwin();
 }
 void Game::saveScore(int score) {
