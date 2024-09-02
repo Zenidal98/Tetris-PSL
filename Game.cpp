@@ -100,13 +100,13 @@ void Game::draw() {
     delwin(playArea);
 
     // Display the score and time in the main screen (stdscr)
-    mvprintw(0, WIDTH * 2 + 4, "Score: %d", score);
+    mvprintw(0, WIDTH * 2 + 4, "Punteggio: %d", score);
 
     // Track and display elapsed time
     if(!paused){
         auto now = std::chrono::steady_clock::now();
         elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
-        mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
+        mvprintw(2, WIDTH * 2 + 4, "Tempo: %d", elapsedTime);
     }
     // Mostra comandi
     mvprintw(4, WIDTH * 2 + 4, "Comandi:");
@@ -157,7 +157,7 @@ void Game::input() {
             if(paused){
                 pauseStartTime = std::chrono::steady_clock::now();
                 nodelay(stdscr, FALSE);
-                mvprintw(14, WIDTH * 2 + 4, "Pausa, riprendi con P");
+                mvprintw(14, WIDTH * 2 + 4, "Pausa attiva, fai ripartire il gioco con P");
                 refresh();
             }
             else{
@@ -165,7 +165,7 @@ void Game::input() {
                 startTime += pauseEndTime - pauseStartTime;
                 lastFallTime += pauseEndTime - pauseStartTime; // Adjust lastFallTime to maintain consistency
                 nodelay(stdscr, TRUE);
-                mvprintw(14, WIDTH * 2 + 4, "                       ");
+                mvprintw(14, WIDTH * 2 + 4, "                                                      ");
                 refresh();
             }
             break;

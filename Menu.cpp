@@ -20,10 +20,10 @@ void Menu::showMainMenu() {
         int start_y = max_y / 2 - 2;
         int start_x = (max_x - 20) / 2;
 
-        mvprintw(start_y, start_x, "Welcome to Tetris!");
-        mvprintw(start_y + 2, start_x, "New Game");
-        mvprintw(start_y + 3, start_x, "Leaderboard");
-        mvprintw(start_y + 4, start_x, "Exit");
+        mvprintw(start_y, start_x, "Benvenuto a Tetris !");
+        mvprintw(start_y + 2, start_x, "Nuova Partita");
+        mvprintw(start_y + 3, start_x, "Classifica");
+        mvprintw(start_y + 4, start_x, "Esci");
 
         if (choice == 0) mvprintw(start_y + 2, start_x - 2, ">");
         else if (choice == 1) mvprintw(start_y + 3, start_x - 2, ">");
@@ -71,9 +71,9 @@ void Menu::showGameOverScreen(int totalScore, int time) {
 
     mvprintw(LINES / 2 - 2, COLS / 2 - 10, "Game Over");
     displayScore(totalScore);
-    mvprintw(LINES / 2 + 4, COLS / 2 - 10, "Press 'q' to quit");
-    mvprintw(LINES / 2 + 6, COLS / 2 - 10, "Press 'c' to play again");
-    mvprintw(LINES / 2 + 8, COLS / 2 - 10, "Press 'm' to return to main menu");
+    mvprintw(LINES / 2 + 4, COLS / 2 - 10, "Premi Q per uscire ");
+    mvprintw(LINES / 2 + 6, COLS / 2 - 10, "Premi C per fare un'altra partita");
+    mvprintw(LINES / 2 + 8, COLS / 2 - 10, "Premi M per tornare al menù principale");
 
     refresh();
     int ch;
