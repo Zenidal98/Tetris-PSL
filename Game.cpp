@@ -60,7 +60,7 @@ void Game::start() {
         logic();
     }
   Menu menu;
-  menu.showGameOverScreen(score);
+  menu.showGameOverScreen(score, elapsedTime);
    // endwin();
 }
 void Game::saveScore(int score) {

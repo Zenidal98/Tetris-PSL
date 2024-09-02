@@ -61,8 +61,10 @@ void Menu::showMainMenu() {
     }
 }
 
-void Menu::showGameOverScreen(int totalScore) {
+void Menu::showGameOverScreen(int totalScore, int time) {
     clear();
+
+    totalScore=totalScore+time/2;
 
     Leaderboard leaderboard;
     leaderboard.saveScore(totalScore);
