@@ -6,43 +6,68 @@
 #include <chrono>
 #include <algorithm>
 
-Game::Game() 
-    : currentTetromino(TetrominoType(rand() % NumTetrominoTypes)),
-      score(0), gameOver(false), currentX(WIDTH / 2 - 2), currentY(0),
-      difficulty(150), elapsedTime(0), paused(false), state(GameState::Playing) {
+Game::Game() : startTime(std::chrono::steady_clock::now()), lastFallTime(std::chrono::steady_clock::now()), elapsedTime(0), 
+               paused(false), state(GameState::Playing) {
     init();
 }
 
 void Game::init() {
-    srand(static_cast<unsigned>(time(0)));
-    std::fill(&board[0][0], &board[0][0] + sizeof(board) / sizeof(int), 0);
-    startTime = std::chrono::steady_clock::now();
-    lastFallTime = startTime;
-    paused = false;
+    clear(); // need in case of previous gameover and previous match
+    refresh();
+    initscr();
+    start_color();
+    cbreak();
+    noecho();
+    curs_set(FALSE);
+    keypad(stdscr, TRUE);
+    timeout(100);
+
+    // Define tetromino color pairs
+    init_pair(I + 1, COLOR_CYAN, COLOR_BLACK);
+    init_pair(J + 1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(L + 1, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(O + 1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(S + 1, COLOR_GREEN, COLOR_BLACK);
+    init_pair(T + 1, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(Z + 1, COLOR_RED, COLOR_BLACK);
+
+    srand(time(NULL));
+    score = 0;
+    gameOver = false;
+    for (int i = 0; i < HEIGHT; ++i) {
+        for (int j = 0; j < WIDTH; ++j) {
+            board[i][j] = 0;
+        }
+    }
+    currentType = TetrominoType(rand() % NumTetrominoTypes);
+    currentRotation = 0;
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+        }
+    }
+    currentX = WIDTH / 2 - 2;
+    currentY = 0;
+
+    startTime = std::chrono::steady_clock::now(); //important so the time is resetted every match
+    lastFallTime = std::chrono::steady_clock::now();
 }
 
 void Game::start() {
-    initscr();
-    noecho();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-
-    while (!gameOver) {
-        input();
-        if (!paused) {
-            auto now = std::chrono::steady_clock::now();
-            std::chrono::duration<double> elapsed = now - lastFallTime;
-
-            if (elapsed.count() >= difficulty / 1000.0) {
-                logic();
-                lastFallTime = now;
-            }
-        }
+    while (state != GameState::GameOver) {
         draw();
+        input();
+        logic();
     }
-
-    endwin();
-    menu.showGameOverScreen(score);
+   showGameOverScreen();
+   // endwin();
+}
+void Game::saveScore(int score) {
+    std::ofstream file("leaderboard.txt", std::ios::app); // Apri in modalità append
+    if (file.is_open()) {
+        file << score << std::endl;
+        file.close();
+    }
 }
 
 
@@ -64,14 +89,13 @@ void Game::draw() {
         }
     }
 
-    auto shape = currentTetromino.getShape();
     // Draw the current tetromino to the play area window
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
-            if (*shape[y][x]) {
-                wattron(playArea, COLOR_PAIR(currentY + 1));
+            if (currentTetromino[y][x]) {
+                wattron(playArea, COLOR_PAIR(currentType + 1));
                 mvwprintw(playArea, currentY + y + 1, (currentX + x) * 2 + 1, "[]");  // Adjust position for the border
-                wattroff(playArea, COLOR_PAIR(currentY + 1));
+                wattroff(playArea, COLOR_PAIR(currentType + 1));
             }
         }
     }
@@ -97,7 +121,7 @@ void Game::draw() {
     mvprintw(6, WIDTH * 2 + 4, "P per pausa");
     mvprintw(7, WIDTH * 2 + 4, "Freccia giù per piazzare subito il blocco");
 
-    refresh();
+    refresh();  // Refresh the main screen to show the score and time
 }
 
 
@@ -105,51 +129,104 @@ void Game::input() {
     int ch = getch();
     switch (ch) {
         case KEY_LEFT:
-            if (!checkCollision(currentX - 1, currentY, *currentTetromino.getShape())) {
-                --currentX;
-            }
+            if (!paused && !checkCollision(currentX - 1, currentY, currentTetromino)) currentX--;
             break;
         case KEY_RIGHT:
-            if (!checkCollision(currentX + 1, currentY, *currentTetromino.getShape())) {
-                ++currentX;
-            }
+            if (!paused && !checkCollision(currentX + 1, currentY, currentTetromino)) currentX++;
             break;
         case KEY_DOWN:
-            if (!checkCollision(currentX, currentY + 1, *currentTetromino.getShape())) {
-                ++currentY;
+            if(!paused){
+                while (!checkCollision(currentX, currentY + 1, currentTetromino)) currentY++;
+                mergeTetromino();
+                currentType = TetrominoType(rand() % NumTetrominoTypes);
+                currentRotation = 0;
+                for (int i = 0; i < 4; ++i) {
+                    for (int j = 0; j < 4; ++j) {
+                        currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+                    }
+                }
+                currentX = WIDTH / 2 - 2;
+                currentY = 0;
+                if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
             }
             break;
         case ' ':
-            rotateTetromino();
+            if(!paused)
+                rotateTetromino();
+            break;
+        case 'r':
+            Game::init();
+            Game::start();
             break;
         case 'p':
             paused = !paused;
-            if (paused) {
+            if(paused){
                 pauseStartTime = std::chrono::steady_clock::now();
-            } else {
-                auto now = std::chrono::steady_clock::now();
-                elapsedTime += std::chrono::duration_cast<std::chrono::seconds>(now - pauseStartTime).count();
+                nodelay(stdscr, FALSE);
+                mvprintw(14, WIDTH * 2 + 4, "Pausa, riprendi con P");
+                refresh();
+            }
+            else{
+                auto pauseEndTime = std::chrono::steady_clock::now();
+                startTime += pauseEndTime - pauseStartTime;
+                lastFallTime += pauseEndTime - pauseStartTime; // Adjust lastFallTime to maintain consistency
+                nodelay(stdscr, TRUE);
+                mvprintw(14, WIDTH * 2 + 4, "                       ");
+                refresh();
             }
             break;
-        case 'q':
-            gameOver = true;
-            break;
     }
+
+    if(score > 200*n && difficulty >=50){
+        difficulty = difficulty - 20;
+        n++;
+    }
+    napms(difficulty);
 }
 
 void Game::logic() {
-    if (!checkCollision(currentX, currentY + 1, *currentTetromino.getShape())) {
-        ++currentY;
-    } else {
-        mergeTetromino();
-        clearLines();
-        currentTetromino = TetrominoType(rand() % NumTetrominoTypes);
-        currentX = WIDTH / 2 - 2;
-        currentY = 0;
-        if (checkCollision(currentX, currentY, *currentTetromino.getShape())) {
-            gameOver = true;
+    if(paused)
+        return;
+
+    // Control block fall speed
+    auto now = std::chrono::steady_clock::now();
+    auto elapsedSinceLastFall = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFallTime).count();
+
+    // Adjust the fall interval as needed
+    int fallInterval = difficulty; // Milliseconds between each block fall
+
+    if (elapsedSinceLastFall > fallInterval) {
+        if (!checkCollision(currentX, currentY + 1, currentTetromino)) {
+            currentY++;
+        } else
+                {
+            mergeTetromino();
+
+            currentType = TetrominoType(rand() % NumTetrominoTypes);
+
+            currentRotation = 0;
+
+            for (int i = 0; i < 4; ++i) {
+
+                for (int j = 0; j < 4; ++j) {
+
+                    currentTetromino[i][j] = TETROMINO_ROTATIONS[currentType][currentRotation][i][j];
+                }
+
+            }
+
+            currentX = WIDTH / 2 - 2;
+            currentY = 0;
+
+            if (checkCollision(currentX, currentY, currentTetromino)) {
+                state = GameState::GameOver;
+            }
+
         }
+        lastFallTime = now;     //update lastFallTime
     }
+    clearLines();
+
 }
 
 bool Game::checkCollision(int x, int y, const int shape[4][4]) {
@@ -200,4 +277,72 @@ void Game::clearLines() {
             ++y;
         }
     }
+}
+
+bool Game::checkCollision(int x, int y, const int shape[4][4]) {
+    // Iterate over the shape of the tetromino
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
+            // Check if the cell in the shape is filled
+            if (shape[j][i]) {
+                // Calculate board coordinates
+                int boardX = x + i;
+                int boardY = y + j;
+
+                // Check boundaries and collision with filled cells on the board
+                if (boardX < 0 || boardX >= WIDTH || boardY >= HEIGHT || boardY < 0 || board[boardY][boardX]) {
+                    return true;  // Collision detected
+                }
+            }
+        }
+    }
+    return false;  // No collision detected
+}
+
+void Game::rotateTetromino() {
+    int nextRotation = (currentRotation + 1) % 4;
+    const int (*rotated)[4] = TETROMINO_ROTATIONS[currentType][nextRotation];
+
+    if (!checkCollision(currentX, currentY, rotated)) {
+        currentRotation = nextRotation;
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                currentTetromino[i][j] = rotated[i][j];
+            }
+        }
+    }
+}
+
+void Game::mergeTetromino() {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (currentTetromino[y][x]) {
+                board[currentY + y][currentX + x] = currentType + 1;
+            }
+        }
+    }
+}
+
+void Game::clearLines() {
+    int counter = 0;
+    for (int y = HEIGHT - 1; y >= 0; y--) {
+        bool fullLine = true;
+        for (int x = 0; x < WIDTH; x++) {
+            if (!board[y][x]) {
+                fullLine = false;
+                break;
+            }
+        }
+        if (fullLine) {
+            for (int i = y; i > 0; --i) {
+                for (int x = 0; x < WIDTH; ++x) {
+                    board[i][x] = board[i - 1][x];
+                }
+            }
+            counter++;
+            y++;
+        }
+    }
+    if(counter > 0)
+        score += 100 * counter + 50 * (counter-1);
 }
