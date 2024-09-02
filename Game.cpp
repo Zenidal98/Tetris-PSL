@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "Tetromino.hpp"
 #include <ncurses.h>
 #include <cstdlib>
 #include <ctime>
@@ -46,29 +47,59 @@ void Game::start() {
 
 
 void Game::draw() {
-    clear();
+    // Create an off-screen window for the play area with border
+    WINDOW *playArea = newwin(HEIGHT + 2, WIDTH * 2 + 2, 0, 0);  // Adjusted window size for the play area with border
 
-    for (int y = 0; y < HEIGHT; ++y) {
-        for (int x = 0; x < WIDTH; ++x) {
+    // Draw the border around the play area
+    box(playArea, 0, 0);  // Draws a border around the play area
+
+    // Draw the board to the play area window
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
             if (board[y][x]) {
-                mvaddch(y, x, '#');
+                wattron(playArea, COLOR_PAIR(board[y][x]));
+                mvwprintw(playArea, y + 1, x * 2 + 1, "[]");  // Adjust position for the border
+                wattroff(playArea, COLOR_PAIR(board[y][x]));
             }
         }
     }
 
     auto shape = currentTetromino.getShape();
-    for (int y = 0; y < 4; ++y) {
-        for (int x = 0; x < 4; ++x) {
-            if ((*shape)[y][x]) {
-                mvaddch(currentY + y, currentX + x, '#');
+    // Draw the current tetromino to the play area window
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (*shape[y][x]) {
+                wattron(playArea, COLOR_PAIR(currentY + 1));
+                mvwprintw(playArea, currentY + y + 1, (currentX + x) * 2 + 1, "[]");  // Adjust position for the border
+                wattroff(playArea, COLOR_PAIR(currentY + 1));
             }
         }
     }
 
-    mvprintw(0, 0, "Score: %d", score);
+    // Refresh the play area window to display the content and border
+    wrefresh(playArea);
+
+    // Free the play area window
+    delwin(playArea);
+
+    // Display the score and time in the main screen (stdscr)
+    mvprintw(0, WIDTH * 2 + 4, "Score: %d", score);
+
+    // Track and display elapsed time
+    if(!paused){
+        auto now = std::chrono::steady_clock::now();
+        elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+        mvprintw(2, WIDTH * 2 + 4, "Time: %d", elapsedTime);
+    }
+    // Mostra comandi
+    mvprintw(4, WIDTH * 2 + 4, "Comandi:");
+    mvprintw(5, WIDTH * 2 + 4, "Spazio per ruotare");
+    mvprintw(6, WIDTH * 2 + 4, "P per pausa");
+    mvprintw(7, WIDTH * 2 + 4, "Freccia giù per piazzare subito il blocco");
 
     refresh();
 }
+
 
 void Game::input() {
     int ch = getch();
