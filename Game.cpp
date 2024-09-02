@@ -63,14 +63,6 @@ void Game::start() {
   menu.showGameOverScreen(score, elapsedTime);
    // endwin();
 }
-void Game::saveScore(int score) {
-    std::ofstream file("leaderboard.txt", std::ios::app); // Apri in modalità append
-    if (file.is_open()) {
-        file << score << std::endl;
-        file.close();
-    }
-}
-
 
 void Game::draw() {
     // Create an off-screen window for the play area with border
@@ -118,9 +110,10 @@ void Game::draw() {
     }
     // Mostra comandi
     mvprintw(4, WIDTH * 2 + 4, "Comandi:");
-    mvprintw(5, WIDTH * 2 + 4, "Spazio per ruotare");
-    mvprintw(6, WIDTH * 2 + 4, "P per pausa");
-    mvprintw(7, WIDTH * 2 + 4, "Freccia giù per piazzare subito il blocco");
+    mvprintw(6, WIDTH * 2 + 4, "Spazio per ruotare");
+    mvprintw(8, WIDTH * 2 + 4, "P per pausa");
+    mvprintw(10, WIDTH * 2 + 4, "Freccia giù per piazzare subito il blocco");
+    mvprintw(12, WIDTH * 2 + 4, "R per ricominciare");
 
     refresh();  // Refresh the main screen to show the score and time
 }
