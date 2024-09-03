@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
-#include <algorithm>
 
 Game::Game() : startTime(std::chrono::steady_clock::now()), lastFallTime(std::chrono::steady_clock::now()), elapsedTime(0), 
                paused(false), state(GameState::Playing) {
