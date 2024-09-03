@@ -174,7 +174,6 @@ private:
     void saveScore(int score);  // per la classifica private
 
     int score;
-    bool gameOver;
     int currentX, currentY;
     TetrominoType currentType;
     int board[HEIGHT][WIDTH];

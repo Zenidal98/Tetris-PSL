@@ -32,7 +32,6 @@ void Game::init() {
 
     srand(time(NULL));
     score = 0;
-    gameOver = false;
     for (int i = 0; i < HEIGHT; ++i) {
         for (int j = 0; j < WIDTH; ++j) {
             board[i][j] = 0;
@@ -140,7 +139,6 @@ void Game::input() {
                 }
                 currentX = WIDTH / 2 - 2;
                 currentY = 0;
-                if (checkCollision(currentX, currentY, currentTetromino)) gameOver = true;
             }
             break;
         case ' ':
